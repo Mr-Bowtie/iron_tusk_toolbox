@@ -1,0 +1,12 @@
+<% content_for :title, "Editing card metadatum" %>
+
+<h1>Editing card metadatum</h1>
+
+<%= render "form", card_metadatum: @card_metadatum %>
+
+<br>
+
+<div>
+  <%= link_to "Show this card metadatum", @card_metadatum %> |
+  <%= link_to "Back to card metadata", card_metadata_path %>
+</div>

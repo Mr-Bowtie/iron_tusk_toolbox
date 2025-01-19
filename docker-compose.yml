@@ -1,0 +1,65 @@
+services:
+  iron_tusk_toolbox:
+    tty: true
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: $PROJECT_NAME:latest
+    container_name: $PROJECT_NAME-web
+    environment: 
+      RAILS_MASTER_KEY: $RAILS_MASTER_KEY
+      RAILS_ENV: $RAILS_ENV
+      FRESH: $FRESH
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # VITE_RUBY_HOST: vite
+      DB_HOST: db
+    restart: on-failure:3
+    depends_on:
+      - 'db'
+      # - 'vite'
+    init: true
+    ports:
+      - "9998:3000"
+    volumes:
+      - ./:/rails:delegated
+      - gem_cache:/rails/vendor/bundle
+    entrypoint: ./docker-entrypoint.sh
+
+  db:
+    image: amd64/postgres:15
+    container_name: $PROJECT_NAME-db
+    pull_policy: "missing"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  # vite:
+  #   command: ./bin/vite dev
+  #   environment:
+  #     VITE_RUBY_HOST: 0.0.0.0
+  #     RAILS_ENV: $RAILS_ENV
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile.development
+  #   volumes:
+  #     - ./:/root/work
+  #     - vite_dev:/root/work/public/vite-dev
+  #     - vite_test:/root/work/public/vite-test
+  #     - gem_cache:/root/work/vendor/bundle
+  #   ports:
+  #     - "3036:3036"
+  #   entrypoint: /root/vite-entrypoint.sh
+
+volumes: 
+  # vite_dev:
+  # vite_test:
+  gem_cache:
+  pgdata:
+# vim: ft=yaml nospell
+

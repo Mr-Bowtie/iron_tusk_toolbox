@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Card metadata" %>
+
+<h1>Card metadata</h1>
+
+<div id="card_metadata">
+  <% @card_metadata.each do |card_metadatum| %>
+    <%= render card_metadatum %>
+    <p>
+      <%= link_to "Show this card metadatum", card_metadatum %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New card metadatum", new_card_metadatum_path %>

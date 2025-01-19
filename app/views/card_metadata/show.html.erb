@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @card_metadatum %>
+
+<div>
+  <%= link_to "Edit this card metadatum", edit_card_metadatum_path(@card_metadatum) %> |
+  <%= link_to "Back to card metadata", card_metadata_path %>
+
+  <%= button_to "Destroy this card metadatum", @card_metadatum, method: :delete %>
+</div>

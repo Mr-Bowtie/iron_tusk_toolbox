@@ -1,0 +1,2 @@
+class CardMetadatum < ApplicationRecord
+end
