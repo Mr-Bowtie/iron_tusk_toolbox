@@ -1,0 +1,12 @@
+<% content_for :title, "Editing card" %>
+
+<h1>Editing card</h1>
+
+<%= render "form", inventory_card: @inventory_card %>
+
+<br>
+
+<div>
+  <%= link_to "Show this card", @inventory_card %> |
+  <%= link_to "Back to cards", inventory_cards_path %>
+</div>

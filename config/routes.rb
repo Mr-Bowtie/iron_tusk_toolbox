@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  namespace :inventory do
+    resources :cards
+  end
   resources :card_metadata
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

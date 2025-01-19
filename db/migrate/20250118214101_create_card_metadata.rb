@@ -12,7 +12,7 @@ class CreateCardMetadata < ActiveRecord::Migration[7.2]
       t.string :toughness
       t.string :colors, array: true, default: []
       t.string :color_identity, array: true, default: []
-      t.string :keywords: array: true, default: []
+      t.string :keywords, array: true, default: []
       t.jsonb :legalities, default: {}
       t.string :frame_effects, array: true, default: []
       t.string :layout
@@ -21,7 +21,9 @@ class CreateCardMetadata < ActiveRecord::Migration[7.2]
       t.string :set_name
       t.string :collector_number
       t.string :rarity
-
+      t.boolean :booster
+      t.jsonb :image_uris, default: {}
+      t.jsonb :prices, default: {}
 
       t.timestamps
     end
