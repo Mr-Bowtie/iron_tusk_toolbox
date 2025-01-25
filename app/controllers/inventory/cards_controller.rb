@@ -6,8 +6,8 @@ class Inventory::CardsController < ApplicationController
   end
 
   def upload_csv
-    csv = params[:csv]
-    binding.pry
+    # add protections against param injection
+    CsvService.add_from_import(params[:csv], "manabox", params[:card_location])
   end
 
   # GET /inventory/cards/1 or /inventory/cards/1.json
@@ -69,6 +69,6 @@ class Inventory::CardsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def inventory_card_params
-      params.fetch(:inventory_card, {})
+      params.require(:inventory_card, {})
     end
 end

@@ -11,10 +11,21 @@
       <%= form.file_field :csv, accept: "text/csv", class: "input" %>
     </div>
   </div>
+  <div class="field">
+    <%= form.label "Stored location", class: "label" %>
+    <div class="control">
+      <%= form.select :card_location, Tag.where(kind: 0).collect {|t| [t.value.humanize, t.id]} %>
+    </div>
+  </div>
   <div>
     <%= form.submit "Upload", class: "button is-primary has-text-offwhite" %>
   </div>
-
 <% end %>
 
-<%= link_to "New card", new_inventory_card_path %>
+<%#displaying cards%>
+<%#<div>%>
+<%#  <% Inventory::Card.all.each do |card|%>%>
+<%#    <%= image_tag card.metadata.image_uris["small"] %>%>
+<%#  <% end %>%>
+<%#</div>%>
+

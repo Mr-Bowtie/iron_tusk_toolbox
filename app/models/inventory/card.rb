@@ -18,7 +18,10 @@
 #  index_inventory_cards_on_scryfall_id_and_foil_and_condition  (scryfall_id,foil,condition) UNIQUE
 #
 class Inventory::Card < ApplicationRecord
-  belongs_to :metadata, class_name: CardMetadatum, foreign_key: :card_metadatum_id
+  belongs_to :metadata, class_name: "CardMetadatum", foreign_key: :card_metadatum_id
+  has_many :card_tags, dependent: :nullify
+  has_many :tags, through: :card_tags
+
 
   enum :condition, [
     :near_mint,

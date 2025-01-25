@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_19_211930) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_25_211151) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -43,6 +43,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_19_211930) do
     t.index ["scryfall_id"], name: "index_card_metadata_on_scryfall_id", unique: true
   end
 
+  create_table "card_tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "card_id"
+    t.bigint "tag_id"
+    t.index ["card_id"], name: "index_card_tags_on_card_id"
+    t.index ["tag_id"], name: "index_card_tags_on_tag_id"
+  end
+
   create_table "inventory_cards", force: :cascade do |t|
     t.string "scryfall_id"
     t.integer "manabox_id"
@@ -54,5 +63,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_19_211930) do
     t.bigint "card_metadatum_id"
     t.index ["card_metadatum_id"], name: "index_inventory_cards_on_card_metadatum_id"
     t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_scryfall_id_and_foil_and_condition", unique: true
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.integer "kind"
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 end
