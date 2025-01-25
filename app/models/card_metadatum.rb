@@ -29,5 +29,10 @@
 #  scryfall_id      :string
 #  tcgplayer_id     :integer
 #
+# Indexes
+#
+#  index_card_metadata_on_scryfall_id  (scryfall_id) UNIQUE
+#
 class CardMetadatum < ApplicationRecord
+  has_many :inventory_cards, class_name: "Inventory::Card", dependent: :nullify
 end

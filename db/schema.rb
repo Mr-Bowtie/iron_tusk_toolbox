@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_19_022918) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_19_211930) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_19_022918) do
     t.jsonb "prices", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["scryfall_id"], name: "index_card_metadata_on_scryfall_id", unique: true
   end
 
   create_table "inventory_cards", force: :cascade do |t|
@@ -50,6 +51,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_19_022918) do
     t.integer "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "card_metadatum_id"
+    t.index ["card_metadatum_id"], name: "index_inventory_cards_on_card_metadatum_id"
     t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_scryfall_id_and_foil_and_condition", unique: true
   end
 end

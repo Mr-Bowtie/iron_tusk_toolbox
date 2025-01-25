@@ -3,7 +3,11 @@ class Inventory::CardsController < ApplicationController
 
   # GET /inventory/cards or /inventory/cards.json
   def index
-    @inventory_cards = Inventory::Card.all
+  end
+
+  def upload_csv
+    csv = params[:csv]
+    binding.pry
   end
 
   # GET /inventory/cards/1 or /inventory/cards/1.json

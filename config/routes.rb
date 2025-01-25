@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   namespace :inventory do
+    post "cards/upload_csv" => "cards#upload_csv"
     resources :cards
   end
   resources :card_metadata
@@ -14,5 +15,5 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "inventory/cards#index"
 end

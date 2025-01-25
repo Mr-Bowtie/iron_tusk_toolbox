@@ -29,6 +29,10 @@
 #  scryfall_id      :string
 #  tcgplayer_id     :integer
 #
+# Indexes
+#
+#  index_card_metadata_on_scryfall_id  (scryfall_id) UNIQUE
+#
 require "test_helper"
 
 class CardMetadatumTest < ActiveSupport::TestCase

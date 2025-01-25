@@ -2,15 +2,19 @@
 
 <% content_for :title, "Cards" %>
 
-<h1>Cards</h1>
+<h1 class="title is-1 has-text-centered">Cards</h1>
 
-<div id="inventory_cards">
-  <% @inventory_cards.each do |inventory_card| %>
-    <%= render inventory_card %>
-    <p>
-      <%= link_to "Show this card", inventory_card %>
-    </p>
-  <% end %>
-</div>
+<%= form_with url: '/inventory/cards/upload_csv', multipart: true, method: :post do |form| %>
+  <div class="field">
+    <%= form.label "Upload and Add Inventory", class: "label" %>
+    <div class="control">
+      <%= form.file_field :csv, accept: "text/csv", class: "input" %>
+    </div>
+  </div>
+  <div>
+    <%= form.submit "Upload", class: "button is-primary has-text-offwhite" %>
+  </div>
+
+<% end %>
 
 <%= link_to "New card", new_inventory_card_path %>
