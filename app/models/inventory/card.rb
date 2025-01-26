@@ -22,6 +22,9 @@ class Inventory::Card < ApplicationRecord
   has_many :card_tags, dependent: :nullify
   has_many :tags, through: :card_tags
 
+  def location
+    tags.where(kind: "location")&.first&.value
+  end
 
   enum :condition, [
     :near_mint,

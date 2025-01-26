@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   resources :tags
   namespace :inventory do
     post "cards/upload_csv" => "cards#upload_csv"
+    post "cards/delete_from_csv" => "cards#delete_from_csv"
     resources :cards
   end
   resources :card_metadata

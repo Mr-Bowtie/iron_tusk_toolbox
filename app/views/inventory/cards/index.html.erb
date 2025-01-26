@@ -4,28 +4,65 @@
 
 <h1 class="title is-1 has-text-centered">Cards</h1>
 
-<%= form_with url: '/inventory/cards/upload_csv', multipart: true, method: :post do |form| %>
-  <div class="field">
-    <%= form.label "Upload and Add Inventory", class: "label" %>
-    <div class="control">
-      <%= form.file_field :csv, accept: "text/csv", class: "input" %>
-    </div>
+<div class="columns is-centered">
+  <div class="column is-one-third has-text-centered">
+    <%= form_with url: '/inventory/cards/upload_csv', multipart: true, method: :post do |form| %>
+      <div class="field">
+        <%= form.label "Upload and Add Inventory", class: "label" %>
+        <div class="control">
+          <%= form.file_field :csv, accept: "text/csv", class: "input" %>
+        </div>
+      </div>
+      <div class="field">
+        <%= form.label "Stored location", class: "label" %>
+        <div class="control">
+          <%= form.select :card_location,
+                      Tag.where(kind: 0).collect { |t| [t.value.humanize, t.id] } %>
+        </div>
+      </div>
+      <div>
+        <%= form.submit "Upload", class: "button is-primary has-text-offwhite" %>
+      </div>
+    <% end %>
   </div>
-  <div class="field">
-    <%= form.label "Stored location", class: "label" %>
-    <div class="control">
-      <%= form.select :card_location, Tag.where(kind: 0).collect {|t| [t.value.humanize, t.id]} %>
-    </div>
+
+  <div class="column is-one-third has-text-centered">
+    <%= form_with url: '/inventory/cards/delete_from_csv', multipart: true, method: :post do |form| %>
+      <div class="field">
+        <%= form.label "Remove Inventory", class: "label" %>
+        <div class="control">
+          <%= form.file_field :csv, accept: "text/csv", class: "input" %>
+        </div>
+      </div>
+      <div class="field">
+        <%= form.label "Stored location", class: "label" %>
+        <div class="control">
+          <%= form.select :location,
+                      Tag.where(kind: 0).collect { |t| [t.value.humanize, t.id] } %>
+        </div>
+      </div>
+      <div>
+        <%= form.submit "Remove", class: "button is-primary has-text-offwhite" %>
+      </div>
+    <% end %>
+
   </div>
-  <div>
-    <%= form.submit "Upload", class: "button is-primary has-text-offwhite" %>
-  </div>
+</div>
+
+<% if !flash[:messages].nil? && !flash[:messages].empty?  %>
+  <%= flash[:messages] %>
 <% end %>
 
-<%#displaying cards%>
-<%#<div>%>
-<%#  <% Inventory::Card.all.each do |card|%>%>
-<%#    <%= image_tag card.metadata.image_uris["small"] %>%>
-<%#  <% end %>%>
-<%#</div>%>
-
+<div class="columns is-multiline is-flex-wrap-wrap is-align-items-baseline">
+  <% Inventory::Card.where("quantity > 0").each do |card| %>
+    <div class="column is-narrow">
+      <%= image_tag card.metadata.image_uris["small"], class: "image" %>
+      <p><b>Quantity:</b>
+        <%= card.quantity %></p>
+      <p><b>Location:</b> <%= card.location %></p>  
+      <% if card.foil %>
+        <p><b>Foil</b></p>
+      <% end %>
+    </div>
+  <% end %>
+</div>
