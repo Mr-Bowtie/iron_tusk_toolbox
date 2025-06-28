@@ -6,6 +6,21 @@ Rails.application.routes.draw do
     resources :cards
   end
   resources :card_metadata
+  
+  # Admin routes
+  namespace :admin do
+    # GoodJob dashboard for monitoring background jobs
+    mount GoodJob::Engine => "jobs"
+    
+    # Scryfall data management
+    resource :scryfall, only: [:show], controller: "scryfall" do
+      member do
+        post :sync
+        post :force_sync
+        get :status
+      end
+    end
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
