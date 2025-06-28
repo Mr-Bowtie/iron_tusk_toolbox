@@ -28,7 +28,7 @@ services:
     entrypoint: ./docker-entrypoint.sh
 
   db:
-    image: amd64/postgres:15
+    image: postgres:15
     container_name: $PROJECT_NAME-db
     pull_policy: "missing"
     environment:
@@ -37,7 +37,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5434:5432"
 
   # vite:
   #   command: ./bin/vite dev
