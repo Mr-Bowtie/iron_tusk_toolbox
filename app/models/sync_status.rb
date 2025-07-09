@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: sync_statuses
+#
+#  id             :bigint           not null, primary key
+#  last_synced_at :datetime
+#  sync_details   :text
+#  sync_type      :string           not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
+# Indexes
+#
+#  index_sync_statuses_on_sync_type  (sync_type) UNIQUE
+#
 class SyncStatus < ApplicationRecord
   validates :sync_type, presence: true, uniqueness: true
   

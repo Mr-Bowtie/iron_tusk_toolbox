@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_06_29_000002) do
+ActiveRecord::Schema[7.2].define(version: 2025_07_09_023853) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -151,8 +151,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_06_29_000002) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "card_metadatum_id"
+    t.bigint "inventory_location_id"
     t.index ["card_metadatum_id"], name: "index_inventory_cards_on_card_metadatum_id"
+    t.index ["inventory_location_id"], name: "index_inventory_cards_on_inventory_location_id"
     t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_scryfall_id_and_foil_and_condition", unique: true
+  end
+
+  create_table "inventory_locations", force: :cascade do |t|
+    t.integer "position"
+    t.string "label"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sync_statuses", force: :cascade do |t|

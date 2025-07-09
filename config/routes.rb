@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :inventory_locations
   resources :tags
   namespace :inventory do
     post "cards/upload_csv" => "cards#upload_csv"
