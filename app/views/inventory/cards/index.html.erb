@@ -1,23 +1,16 @@
 <p style="color: green"><%= notice %></p>
 
-<% content_for :title, "Cards" %>
+<% content_for :title, "Staging" %>
 
 <h1 class="title is-1 has-text-centered">Cards</h1>
 
 <div class="columns is-centered">
   <div class="column is-one-third has-text-centered">
-    <%= form_with url: '/inventory/cards/upload_csv', multipart: true, method: :post do |form| %>
+    <%= form_with url: '/inventory/cards/process_import_for_staging', multipart: true, method: :post do |form| %>
       <div class="field">
         <%= form.label "Upload and Add Inventory", class: "label" %>
         <div class="control">
           <%= form.file_field :csv, accept: "text/csv", class: "input" %>
-        </div>
-      </div>
-      <div class="field">
-        <%= form.label "Stored location", class: "label" %>
-        <div class="control">
-          <%= form.select :card_location,
-                      Tag.where(kind: 0).collect { |t| [t.value.humanize, t.id] } %>
         </div>
       </div>
       <div>
@@ -53,16 +46,3 @@
   <%= flash[:messages] %>
 <% end %>
 
-<div class="columns is-multiline is-flex-wrap-wrap is-align-items-baseline">
-  <% Inventory::Card.where("quantity > 0").each do |card| %>
-    <div class="column is-narrow">
-      <%= image_tag card.metadata.image_uris["small"], class: "image" %>
-      <p><b>Quantity:</b>
-        <%= card.quantity %></p>
-      <p><b>Location:</b> <%= card.location %></p>  
-      <% if card.foil %>
-        <p><b>Foil</b></p>
-      <% end %>
-    </div>
-  <% end %>
-</div>

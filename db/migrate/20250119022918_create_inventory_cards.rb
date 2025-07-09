@@ -10,6 +10,6 @@ class CreateInventoryCards < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    add_index :inventory_cards, [ :scryfall_id, :foil, :condition ], unique: true
+    add_index :inventory_cards, [ :scryfall_id, :foil, :condition ]
   end
 end

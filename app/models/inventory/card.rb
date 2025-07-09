@@ -6,6 +6,7 @@
 #  condition             :integer
 #  foil                  :boolean
 #  quantity              :integer
+#  staged                :boolean
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  card_metadatum_id     :bigint
@@ -17,13 +18,13 @@
 #
 #  index_inventory_cards_on_card_metadatum_id                   (card_metadatum_id)
 #  index_inventory_cards_on_inventory_location_id               (inventory_location_id)
-#  index_inventory_cards_on_scryfall_id_and_foil_and_condition  (scryfall_id,foil,condition) UNIQUE
+#  index_inventory_cards_on_scryfall_id_and_foil_and_condition  (scryfall_id,foil,condition)
 #
 class Inventory::Card < ApplicationRecord
   belongs_to :metadata, class_name: "CardMetadatum", foreign_key: :card_metadatum_id
   has_many :card_tags, dependent: :nullify
   has_many :tags, through: :card_tags
-  belongs_to :inventory_location
+  belongs_to :inventory_location, class_name: "Inventory::Location"
 
   enum :condition, [
     :near_mint,
@@ -32,4 +33,4 @@ class Inventory::Card < ApplicationRecord
     :heavily_played,
     :damaged
   ]
-end
+end 

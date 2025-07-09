@@ -7,14 +7,8 @@ class ScryfallDataSyncJob < ApplicationJob
     begin
       sync_service = ScryfallSyncService.new
 
-      # Check if update is needed (unless forced)
-      unless force_update || sync_service.update_needed?
-        Rails.logger.info "Scryfall data is up to date, skipping sync"
-        return
-      end
-
       # Perform the sync
-      result = sync_service.sync_data
+      result = sync_service.perform_sync
 
       Rails.logger.info "Scryfall sync completed successfully: #{result[:stats]}"
 
@@ -32,3 +26,4 @@ class ScryfallDataSyncJob < ApplicationJob
     end
   end
 end
+

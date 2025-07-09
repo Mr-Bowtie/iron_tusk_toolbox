@@ -5,11 +5,22 @@ class Inventory::CardsController < ApplicationController
   def index
   end
 
-  def upload_csv
-    # add protections against param injection
-    CsvService.add_from_import(params[:csv], "manabox", params[:card_location])
-    redirect_to inventory_cards_path
+
+  def process_import_for_staging
+    CsvService.stage_import(params[:csv], "manabox")
+
+    redirect_to inventory_cards_import_staging_path
   end
+
+  def import_staging
+    @cards = Inventory::Card.where(staged: true)
+  end
+
+  # def upload_csv
+  #   # add protections against param injection
+  #   CsvService.add_from_import(params[:csv], "manabox", params[:card_location])
+  #   redirect_to inventory_cards_path
+  # end
 
   def delete_from_csv
     flash[:messages] = CsvService.delete_from_import(params[:csv], "manabox", params[:card_location])

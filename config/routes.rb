@@ -2,19 +2,21 @@ Rails.application.routes.draw do
   resources :inventory_locations
   resources :tags
   namespace :inventory do
+    get "cards/import_staging" => "cards#import_staging"
+    post "cards/process_import_for_staging" => "cards#process_import_for_staging"
     post "cards/upload_csv" => "cards#upload_csv"
     post "cards/delete_from_csv" => "cards#delete_from_csv"
     resources :cards
   end
   resources :card_metadata
-  
+
   # Admin routes
   namespace :admin do
     # GoodJob dashboard for monitoring background jobs
     mount GoodJob::Engine => "jobs"
-    
+
     # Scryfall data management
-    resource :scryfall, only: [:show], controller: "scryfall" do
+    resource :scryfall, only: [ :show ], controller: "scryfall" do
       member do
         post :sync
         post :force_sync
