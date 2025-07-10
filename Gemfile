@@ -81,3 +81,5 @@ end
 gem "bulma-rails", "~> 1.0"
 
 gem "dartsass-rails", "~> 0.5.1"
+
+gem "foreman", "~> 0.88.1"

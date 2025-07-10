@@ -12,6 +12,7 @@
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.12",
     "bulma": "^1.0.4",
+    "choices.js": "^11.1.0",
     "sass": "^1.83.4"
   }
 }
