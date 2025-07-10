@@ -1,0 +1,54 @@
+<div class="level">
+  <div class="is-flex is-flex-direction-column">
+    <%= link_to "Clear Staging",
+    inventory_cards_clear_staging_path,
+    class: "button is-warning",
+    data: {
+      turbo_method: :post,
+    } %>
+
+    <%= link_to "Back to dashboard", inventory_cards_path, class: "mt-4" %>
+  </div>
+
+  <h1 class=" title is-1 has-text-centered" style="position:absolute;right:40%;left:40%;">Staging</h1>
+
+</div>
+
+<%= form_with url: 'inventory/locations/set_staged_location', class: "mb-6 is-flex is-align-items-center is-justify-content-center" ,method: :post do |form| %>
+    <div class="field mr-6" data-controller="choices">
+      <%= form.label "Select existing location", class: "label" %>
+      <div class="control">
+        <%= form.select :existing_location_id,
+          Inventory::Location.all.collect { |loc| [loc.label, loc.id] },
+          {},
+          class: "choice-select"
+        %>
+      </div>
+    </div>
+
+    <div class="field mr-6">
+      <%= form.label "Create new location", class: "label" %>
+      <div class="control">
+        <%= form.text_field :new_location_label, class: "input" %>
+      </div>
+    </div>
+
+    <%= form.submit "Convert to inventory", class: "button is-primary level-right" %>
+<% end %>
+
+<div class="columns is-multiline is-flex-wrap-wrap is-align-items-baseline">
+  <% unless @cards.empty? || @cards.nil? %>
+    <% @cards.each do |card| %>
+      <div class="column is-narrow">
+        <%= image_tag card.metadata.image_uris["small"], class: "image" %>
+        <p><b>Quantity:</b>
+          <%= card.quantity %></p>
+        <% if card.foil %>
+          <p><b>Foil</b></p>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="is-size-3">No Cards Staged</p>
+  <% end %>
+</div>

@@ -1,8 +1,9 @@
-<p style="color: green"><%= notice %></p>
-
 <% content_for :title, "Staging" %>
 
-<h1 class="title is-1 has-text-centered">Inventory Dashboard</h1>
+<div class="level">
+  <h1 class="title is-1 has-text-centered">Inventory Dashboard</h1>
+  <%= link_to "Go to Staging", inventory_cards_staging_path, class: "button"%>
+</div>
 
 <div class="columns is-centered">
   <div class="column is-one-third has-text-centered">
