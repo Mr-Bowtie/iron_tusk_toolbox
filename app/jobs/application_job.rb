@@ -6,7 +6,7 @@ class ApplicationJob < ActiveJob::Base
   retry_on ActiveRecord::Deadlocked, wait: 5.seconds, attempts: 3
 
   # Retry network-related errors for external API calls
-  retry_on Net::HTTPRequestTimeOut, Net::HTTPError, wait: :exponentially_longer, attempts: 5
+  # retry_on Net::HTTPError, wait: :exponentially_longer, attempts: 5
 
   # Most jobs are safe to ignore if the underlying records are no longer available
   discard_on ActiveJob::DeserializationError

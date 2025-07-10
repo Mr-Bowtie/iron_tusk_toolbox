@@ -3,16 +3,11 @@ class Admin::ScryfallController < ApplicationController
     @sync_status = SyncStatus.find_by(sync_type: "scryfall_cards")
     @card_count = CardMetadatum.count
     @recent_cards = CardMetadatum.order(updated_at: :desc).limit(5)
-    @update_needed = sync_service.update_needed?
   end
 
   def sync
-    if sync_service.update_needed?
       ScryfallDataSyncJob.perform_later
       flash[:success] = "Scryfall sync job has been queued. Check the Jobs dashboard for progress."
-    else
-      flash[:info] = "Scryfall data is already up to date."
-    end
 
     redirect_to admin_scryfall_path
   end
@@ -32,8 +27,7 @@ class Admin::ScryfallController < ApplicationController
           render json: {
             last_synced_at: @sync_status.last_synced_at,
             sync_details: @sync_status.sync_details_hash,
-            card_count: CardMetadatum.count,
-            update_needed: sync_service.update_needed?
+            card_count: CardMetadatum.count
           }
         else
           render json: {

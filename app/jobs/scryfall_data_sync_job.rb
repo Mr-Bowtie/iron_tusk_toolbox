@@ -8,9 +8,9 @@ class ScryfallDataSyncJob < ApplicationJob
       sync_service = ScryfallSyncService.new
 
       # Perform the sync
-      result = sync_service.perform_sync
+      result = sync_service.sync_data
 
-      Rails.logger.info "Scryfall sync completed successfully: #{result[:stats]}"
+      Rails.logger.info "Scryfall sync completed successfully: !"
 
       # Optionally notify about completion
       # NotificationService.notify_sync_complete(result) if defined?(NotificationService)
