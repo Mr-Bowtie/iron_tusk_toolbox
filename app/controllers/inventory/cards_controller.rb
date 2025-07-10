@@ -16,6 +16,12 @@ class Inventory::CardsController < ApplicationController
     @cards = Inventory::Card.where(staged: true)
   end
 
+  def clear_staging
+    Inventory::Card.where(staged: true).delete_all
+    
+    redirect_to inventory_cards_import_staging_path
+  end
+
   # def upload_csv
   #   # add protections against param injection
   #   CsvService.add_from_import(params[:csv], "manabox", params[:card_location])

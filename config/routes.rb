@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   namespace :inventory do
     get "cards/import_staging" => "cards#import_staging"
     post "cards/process_import_for_staging" => "cards#process_import_for_staging"
+    post "cards/clear_staging" => "cards#clear_staging"
     post "cards/upload_csv" => "cards#upload_csv"
     post "cards/delete_from_csv" => "cards#delete_from_csv"
     resources :cards
