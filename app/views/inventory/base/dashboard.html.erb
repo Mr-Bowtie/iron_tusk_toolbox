@@ -1,0 +1,43 @@
+<% content_for :title, "Dashboard" %>
+
+<div class="level">
+  <h1 class="title is-1 has-text-centered">Inventory Dashboard</h1>
+  <%= link_to "Go to Staging", inventory_cards_staging_path, class: "button"%>
+</div>
+
+<div class="columns is-centered">
+  <div class="column is-one-third has-text-centered">
+    <%= form_with url: '/inventory/cards/process_import_for_staging', multipart: true, method: :post do |form| %>
+      <div class="field">
+        <%= form.label "Upload and Add Inventory", class: "label" %>
+        <div class="control">
+          <%= form.file_field :csv, accept: "text/csv", class: "input" %>
+        </div>
+      </div>
+      <div>
+        <%= form.submit "Upload", class: "button is-primary has-text-offwhite" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="column is-one-third has-text-centered">
+    <%= form_with url: '/inventory/cards/delete_from_csv', multipart: true, method: :post do |form| %>
+      <div class="field">
+        <%= form.label "Remove Inventory", class: "label" %>
+        <div class="control">
+          <%= form.file_field :csv, accept: "text/csv", class: "input" %>
+        </div>
+      </div>
+      <div>
+        <%= form.submit "Remove", class: "button is-primary has-text-offwhite" %>
+      </div>
+    <% end %>
+
+  </div>
+</div>
+
+<% if !flash[:messages].nil? && !flash[:messages].empty?  %>
+  <%= flash[:messages] %>
+<% end %>
+
+

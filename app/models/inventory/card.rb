@@ -24,7 +24,7 @@ class Inventory::Card < ApplicationRecord
   belongs_to :metadata, class_name: "CardMetadatum", foreign_key: :card_metadatum_id
   has_many :card_tags, dependent: :nullify
   has_many :tags, through: :card_tags
-  belongs_to :inventory_location, class_name: "Inventory::Location"
+  belongs_to :inventory_location, class_name: "Inventory::Location", optional: true
 
   enum :condition, [
     :near_mint,

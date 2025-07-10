@@ -37,4 +37,21 @@
 // @import "bulma/sass/layout/section.sass";
 
 @import 'bulma/bulma';
+@import "bulma/sass/utilities/initial-variables";
+@import "bulma/sass/utilities/functions";
+@import "bulma/sass/utilities/derived-variables";
 @import "choices.js/src/styles/choices";
+
+.choices__inner {
+  .choices__list {
+      .choices__item--selectable {
+        color: black;
+      }
+
+  }
+
+}
+  
+.choices__item--choice {
+  color: black !important;
+}

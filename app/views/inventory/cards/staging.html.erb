@@ -1,11 +1,8 @@
 <div class="level">
   <div class="is-flex is-flex-direction-column">
-    <%= link_to "Clear Staging",
-    inventory_cards_clear_staging_path,
-    class: "button is-warning",
-    data: {
-      turbo_method: :post,
-    } %>
+    <%= form_with url: inventory_cards_clear_staging_path, method: :post, data: {confirm: "Are you sure?"} do |form| %>
+      <%= form.submit "Clear Staging", class: "button is-warning" %>
+    <% end %>
 
     <%= link_to "Back to dashboard", inventory_cards_path, class: "mt-4" %>
   </div>
@@ -14,14 +11,14 @@
 
 </div>
 
-<%= form_with url: 'inventory/locations/set_staged_location', class: "mb-6 is-flex is-align-items-center is-justify-content-center" ,method: :post do |form| %>
+<%= form_with url: inventory_cards_convert_to_inventory_url, class: "mb-6 is-flex is-align-items-center is-justify-content-center" ,method: :post do |form| %>
     <div class="field mr-6" data-controller="choices">
       <%= form.label "Select existing location", class: "label" %>
       <div class="control">
         <%= form.select :existing_location_id,
           Inventory::Location.all.collect { |loc| [loc.label, loc.id] },
-          {},
-          class: "choice-select"
+          {include_blank: true},
+          class: "choice-select has-text-black"
         %>
       </div>
     </div>
@@ -49,6 +46,6 @@
       </div>
     <% end %>
   <% else %>
-    <p class="is-size-3">No Cards Staged</p>
+    <p class="column is-size-3 has-text-centered">No Cards Staged</p>
   <% end %>
 </div>

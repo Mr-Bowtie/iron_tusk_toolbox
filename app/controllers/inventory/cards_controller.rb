@@ -1,6 +1,6 @@
 class Inventory::CardsController < ApplicationController
+  before_action :set_staged_cards, only: %i[ staging clear_staging convert_to_inventory ]
   before_action :set_inventory_card, only: %i[ show edit update destroy ]
-  before_action :set_staged_cards, only: %i[staging clear_staging convert_to_inventory]
 
   # GET /inventory/cards or /inventory/cards.json
   def index
@@ -24,17 +24,21 @@ class Inventory::CardsController < ApplicationController
 
   def convert_to_inventory
     location = nil
-    if params[:existing_location]
-      location = Inventory::Location.find(params[:existing_location_id])
-    else
+    if params[:new_location_label].length > 0
       location = Inventory::Location.create(label: params[:new_location_label])
+      # If new location label was entered, clear any input from existing location selection
+      params[:existing_location_id] = ""
+
+    elsif params[:existing_location_id].length > 0 && params[:existing_location_id] != Inventory::Location.find_by(label: "Staging").id
+      location = Inventory::Location.find(params[:existing_location_id])
     end
 
     unless location.nil?
       @cards.update_all staged: false, inventory_location_id: location.id
       redirect_to inventory_cards_path, notice: "Staging successfully converted to live inventory"
     else
-      render :staging, status: unprocessable_entity
+      flash.now[:alert] = "Select an existing inventory location or enter a new location label"
+      render :staging, status: :unprocessable_entity 
     end
   end
 

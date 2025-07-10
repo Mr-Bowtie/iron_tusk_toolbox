@@ -9,6 +9,6 @@
 #  updated_at :datetime         not null
 #
 class Inventory::Location < ApplicationRecord
-  has_many :inventory_cards, class_name: "Inventory::Card", dependent: :nullify
+  has_many :inventory_cards, class_name: "Inventory::Card", dependent: :nullify, foreign_key: :inventory_location_id
   validates_uniqueness_of(:label)
 end

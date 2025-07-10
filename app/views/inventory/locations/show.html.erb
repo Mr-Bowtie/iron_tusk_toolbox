@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @inventory_location %>
+
+<div>
+  <%= link_to "Edit this location", edit_inventory_location_path(@inventory_location) %> |
+  <%= link_to "Back to locations", inventory_locations_path %>
+
+  <%= button_to "Destroy this location", @inventory_location, method: :delete %>
+</div>

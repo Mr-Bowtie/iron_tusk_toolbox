@@ -57,7 +57,7 @@ class CsvService
       card_metadatum_id: CardMetadatum.where(scryfall_id: row["Scryfall ID"]).first.id,
       manabox_id: row["ManaBox ID"].to_i,
       staged: true,
-      inventory_location_id: Inventory::Location.find_or_create_by(label: "Staging").id
+      # inventory_location_id: Inventory::Location.find_or_create_by(label: "Staging").id
     )
   end
 

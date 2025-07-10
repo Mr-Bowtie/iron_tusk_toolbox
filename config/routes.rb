@@ -2,12 +2,15 @@ Rails.application.routes.draw do
   resources :inventory_locations
   resources :tags
   namespace :inventory do
+    resources :locations
+    get "/" => "base#dashboard" 
     get "cards/staging" => "cards#staging"
     post "cards/process_import_for_staging" => "cards#process_import_for_staging"
     post "cards/clear_staging" => "cards#clear_staging"
     post "cards/upload_csv" => "cards#upload_csv"
     post "cards/delete_from_csv" => "cards#delete_from_csv"
     post "cards/convert_to_inventory" => "cards#convert_to_inventory"
+    
     resources :cards
   end
   resources :card_metadata
@@ -37,5 +40,5 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   # Defines the root path route ("/")
-  root "inventory/cards#index"
+  root "inventory/base#dashboard"
 end
