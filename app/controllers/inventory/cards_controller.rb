@@ -1,5 +1,6 @@
 class Inventory::CardsController < ApplicationController
   before_action :set_inventory_card, only: %i[ show edit update destroy ]
+  before_action :set_staged_cards, only: %i[staging clear_staging convert_to_inventory]
 
   # GET /inventory/cards or /inventory/cards.json
   def index
@@ -9,17 +10,32 @@ class Inventory::CardsController < ApplicationController
   def process_import_for_staging
     CsvService.stage_import(params[:csv], "manabox")
 
-    redirect_to inventory_cards_import_staging_path
+    redirect_to inventory_cards_staging_path
   end
 
-  def import_staging
-    @cards = Inventory::Card.where(staged: true)
+  def staging
   end
 
   def clear_staging
-    Inventory::Card.where(staged: true).delete_all
-    
-    redirect_to inventory_cards_import_staging_path
+    @cards.delete_all
+
+    redirect_to inventory_cards_staging_path
+  end
+
+  def convert_to_inventory
+    location = nil
+    if params[:existing_location]
+      location = Inventory::Location.find(params[:existing_location_id])
+    else
+      location = Inventory::Location.create(label: params[:new_location_label])
+    end
+
+    unless location.nil?
+      @cards.update_all staged: false, inventory_location_id: location.id
+      redirect_to inventory_cards_path, notice: "Staging successfully converted to live inventory"
+    else
+      render :staging, status: unprocessable_entity
+    end
   end
 
   # def upload_csv
@@ -93,5 +109,9 @@ class Inventory::CardsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def inventory_card_params
       params.require(:inventory_card, {})
+    end
+
+    def set_staged_cards
+      @cards = Inventory::Card.joins(:metadata).where(staged: true).order("card_metadata.name ASC")
     end
 end
