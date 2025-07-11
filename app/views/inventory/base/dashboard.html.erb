@@ -36,6 +36,12 @@
   </div>
 </div>
 
+<div class="columns">
+  <% @locations.each do |loc| %>
+    <%= render loc %> 
+  <% end %>
+</div>
+
 <% if !flash[:messages].nil? && !flash[:messages].empty?  %>
   <%= flash[:messages] %>
 <% end %>
