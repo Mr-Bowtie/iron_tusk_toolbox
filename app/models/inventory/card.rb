@@ -27,8 +27,14 @@ class Inventory::Card < ApplicationRecord
   belongs_to :inventory_location, class_name: "Inventory::Location", optional: true
 
   enum :condition, [
+    :mint,
     :near_mint,
+    :excellent,
+    :good,
+    :played,
+    :poor,
     :lightly_played,
+    :light_played,
     :moderately_played,
     :heavily_played,
     :damaged

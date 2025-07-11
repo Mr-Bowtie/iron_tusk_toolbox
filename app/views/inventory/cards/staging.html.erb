@@ -37,7 +37,13 @@
   <% unless @cards.empty? || @cards.nil? %>
     <% @cards.each do |card| %>
       <div class="column is-narrow">
-        <%= image_tag card.metadata.image_uris["small"], class: "image" %>
+        <% if card.metadata.image_uris.length > 0 %>
+          <%= image_tag card.metadata.image_uris["small"], class: "image" %>
+        <% elsif card.metadata.front_image_uris.length > 0 %>
+          <%= image_tag card.metadata.front_image_uris["small"], class: "image" %>
+        <% else %>
+          <p>No Image Found</p>
+        <% end %>
         <p><b>Quantity:</b>
           <%= card.quantity %></p>
         <% if card.foil %>

@@ -84,19 +84,41 @@ class ScryfallSyncService < ApplicationService
   end
 
   def import_data(json_data)
+    work_queue = Queue.new
+    threads = []
     @sync_stats[:total_cards] = json_data.size
     Rails.logger.info "Processing #{@sync_stats[:total_cards]} cards..."
 
+    5.times do
+      threads << Thread.new do
+        while (batch = work_queue.pop) != :END
+          processed_batch = process_card_batch(batch)
+          import_batch(processed_batch)
+        end
+      end
+    end
+
     json_data.each_slice(BATCH_SIZE).with_index do |batch, index|
       Rails.logger.info "Processing batch #{index + 1}/#{(@sync_stats[:total_cards] / BATCH_SIZE.to_f).ceil}"
-
-      processed_batch = process_card_batch(batch)
-      import_batch(processed_batch)
+      
+      work_queue << batch
     end
+
+    # signal threads to finish 
+    5.times {work_queue << :END}
+    threads.each(&:join)
   end
 
   def process_card_batch(batch)
     batch.map do |card_data|
+      front_image_uris = {}
+      back_image_uris = {}
+
+      unless card_data[:card_faces].nil?
+        front_image_uris = card_data[:card_faces][0][:image_uris]
+        back_image_uris = card_data[:card_faces][1][:image_uris]
+      end
+
       {
         scryfall_id: card_data[:id],
         tcgplayer_id: card_data[:tcgplayer_id],
@@ -119,6 +141,8 @@ class ScryfallSyncService < ApplicationService
         collector_number: card_data[:collector_number],
         rarity: card_data[:rarity],
         booster: card_data[:booster],
+        front_image_uris: front_image_uris,
+        back_image_uris: back_image_uris,
         image_uris: card_data[:image_uris] || {},
         prices: card_data[:prices] || {},
         created_at: Time.current,
@@ -135,7 +159,7 @@ class ScryfallSyncService < ApplicationService
     return if processed_batch.empty?
 
     result = CardMetadatum.upsert_all(
-      processed_batch,
+      processed_batch.uniq { |card| card[:scryfall_id]},
       unique_by: :scryfall_id,
       returning: [ :id, :scryfall_id, :created_at, :updated_at ]
     )
