@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     post "cards/upload_csv" => "cards#upload_csv"
     post "cards/delete_from_csv" => "cards#delete_from_csv"
     post "cards/convert_to_inventory" => "cards#convert_to_inventory"
+    post "cards/generate_pull_sheet_from_csv" => "cards#generate_pull_sheet_from_csv"
     
     resources :cards
   end

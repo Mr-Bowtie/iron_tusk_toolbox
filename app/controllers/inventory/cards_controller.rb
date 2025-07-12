@@ -6,6 +6,12 @@ class Inventory::CardsController < ApplicationController
   def index
   end
 
+  def generate_pull_sheet_from_csv
+    case params[:format]
+    when "manapool_pull"
+      results = CsvService.process_manapool_pull(params[:csv].path)
+    end
+  end
 
   def process_import_for_staging
     CsvService.stage_import(params[:csv], "manabox")
@@ -38,7 +44,7 @@ class Inventory::CardsController < ApplicationController
       redirect_to inventory_cards_path, notice: "Staging successfully converted to live inventory"
     else
       flash.now[:alert] = "Select an existing inventory location or enter a new location label"
-      render :staging, status: :unprocessable_entity 
+      render :staging, status: :unprocessable_entity
     end
   end
 

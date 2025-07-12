@@ -1,6 +1,7 @@
 require "csv"
 
-class CsvService
+class CsvService < ApplicationService
+  
   # @param [CSV] import :a csv of cards to add quantity for
   # @param [String] format :the format of the import csv
   # @param [Integer] location :id of the location tag for the imported cards
@@ -47,7 +48,6 @@ class CsvService
   # @param [CSV::Row] row a singular row from an import csv to be processed
   # @param [Integer] id of the location tag for the imported card
   def self.process_manabox_row_import(row)
-    # TODO: switch to finding all cards matching, then filtering by location
     # INFO: we want to have seperate records for each card in each location
     Inventory::Card.create(
       condition: row["Condition"],
@@ -59,6 +59,89 @@ class CsvService
       staged: true,
       # inventory_location_id: Inventory::Location.find_or_create_by(label: "Staging").id
     )
+  end
+    
+  PickedCard = Struct.new(
+        "PickedCard",
+        :name,
+        :condition,
+        :foil,
+        :location_label,
+        :quantity
+      )
+  PullResults = Struct.new("PullResults", :found_cards, :errors) do
+    def initialize(*)
+      super
+      self.found_cards ||= []
+      self.errors ||= []
+    end
+  end
+
+  # TODO: Refactor the hell out of this
+  def self.process_manapool_pull(file_path)
+    # TODO: utilize structs for these data data holders
+    results = PullResults.new
+    CSV.foreach(file_path, headers: true) do |row|
+      # TODO: sort by location
+
+      # Find all cards in all locations that match the current card datetime
+      cards = Inventory::Card.where(scryfall_id: row["scryfall_id"], condition: row["condition"], foil: row["foil"])
+
+      binding.pry
+      # Log when a card is not found in inventory, process next card
+      if cards.nil?
+        results.errors << { message: "no card found in inventory", card_data: row }
+        next
+      end
+
+      # Check to see if there is enough quantity in inventory to satisfy the pull sheet, if not log error and set pull quantity to total in stock
+      card_count = cards&.reduce(0) { |memo, card| memo += card.quantity }
+      cards_to_pull = row["quantity"]
+      if card_count < cards_to_pull
+        results[:errors] << { message: "Insufficient inventory quantity. Requested: #{row[:quantity]}, Found in inventory: #{cards.length}" }
+        cards_to_pull = card_count
+        binding.pry
+      end
+
+      binding.pry
+
+      # Iterate over found cards and built pull list
+      while cards_to_pull != 0
+        active_card = cards.pop
+
+        # if card quantity greater than cards to pull, reduce inventory quantity by pull quantity
+        # push into found cards with pull quantity, set pull to 0
+
+        if active_card.quantity >= cards_to_pull
+          pulled_cards = PickedCard.new(
+            active_card.metadata.name,
+            active_card.condition,
+            active_card.foil,
+            active_card.inventory_location.label,
+            cards_to_pull
+          )
+          results.found_cards << pulled_cards
+          active_card.update(quantity: active_card.quantity - cards_to_pull)
+          cards_to_pull = 0
+        
+        else
+          pulled_cards = PickedCard.new(
+            active_card.metadata.name,
+            active_card.condition,
+            active_card.foil,
+            active_card.inventory_location.label,
+            active_card.quantity
+          )
+          
+          results.found_cards << pulled_cards
+          cards_to_pull -= active_card.quantity
+          active_card.delete
+        end
+
+      end
+    end
+    binding.pry
+    results
   end
 
   def self.process_streamed_csv(file_path, format: "manabox", thread_count: 4, batch_size: 1_000)

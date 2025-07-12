@@ -21,15 +21,21 @@
   </div>
 
   <div class="column is-one-third has-text-centered">
-    <%= form_with url: '/inventory/cards/delete_from_csv', multipart: true, method: :post do |form| %>
+    <%= form_with url: '/inventory/cards/generate_pull_sheet_from_csv', multipart: true, method: :post do |form| %>
       <div class="field">
-        <%= form.label "Remove Inventory", class: "label" %>
+        <%= form.label "Generate Pull Sheet", class: "label" %>
         <div class="control">
           <%= form.file_field :csv, accept: "text/csv", class: "input" %>
         </div>
       </div>
+      <div class="field">
+        <%= form.label "Format", class: "label" %>
+        <div class="control">
+          <%= form.select :format, [['ManaPool Pullsheet', 'manapool_pull']] %>
+        </div>
+      </div>
       <div>
-        <%= form.submit "Remove", class: "button is-primary has-text-offwhite" %>
+        <%= form.submit "Pull", class: "button is-primary has-text-offwhite" %>
       </div>
     <% end %>
 

@@ -29,7 +29,7 @@
         </div>
       </div>
       <div class="field">
-        <%= form.label "Stored location", class: "label" %>
+        <%= form.label "format", class: "label" %>
         <div class="control">
           <%= form.select :location,
                       Tag.where(kind: 0).collect { |t| [t.value.humanize, t.id] } %>
