@@ -37,7 +37,7 @@ class Inventory::Card < ApplicationRecord
   # @param [String] condition
   #
   # this normalizes conditions from fields in csv's getting processed
-  def map_condition(condition)
+  def self.map_condition(condition)
     case condition
     when "mint", "NM", "Near Mint"
       "near_mint"
@@ -51,6 +51,18 @@ class Inventory::Card < ApplicationRecord
       "damaged"
     else
 
+    end
+  end
+
+  # @param [String] foil
+  #
+  # maps foil input from field in ingested csv to internal boolean
+  def self.map_foil(foil)
+    case foil
+    when "FO", /^.*Foil$/
+      true
+    else
+      false
     end
   end
 end
