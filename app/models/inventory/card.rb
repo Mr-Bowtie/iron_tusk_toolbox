@@ -27,16 +27,30 @@ class Inventory::Card < ApplicationRecord
   belongs_to :inventory_location, class_name: "Inventory::Location", optional: true
 
   enum :condition, [
-    :mint,
     :near_mint,
-    :excellent,
-    :good,
-    :played,
-    :poor,
     :lightly_played,
-    :light_played,
     :moderately_played,
     :heavily_played,
     :damaged
   ]
-end 
+
+  # @param [String] condition
+  #
+  # this normalizes conditions from fields in csv's getting processed
+  def map_condition(condition)
+    case condition
+    when "mint", "NM", "Near Mint"
+      "near_mint"
+    when "near_mint", "LP", "Lightly Played"
+      "lightly_played"
+    when "excellent", "good", "MP", "Moderately Played"
+      "moderately_played"
+    when "light_played", "played", "HP", "Heavily Played"
+      "heavily_played"
+    when "poor", "DMG", "Damaged"
+      "damaged"
+    else
+
+    end
+  end
+end
