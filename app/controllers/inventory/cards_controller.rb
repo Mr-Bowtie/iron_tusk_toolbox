@@ -7,16 +7,13 @@ class Inventory::CardsController < ApplicationController
   end
 
   def generate_pull_sheet_from_csv
-    case params[:format]
-    when "manapool_pull"
-      results = CsvService.process_manapool_pull(params[:csv].path)
+      results = Inventory::Puller.process(file_path: params[:csv].path, format: params[:format])
       pdf_data = PdfService.generate_pull_sheet(results)
 
       send_data pdf_data,
                 filename: "it_pullsheet_#{Time.now.strftime('%y%m%d-%H%M')}.pdf",
                 type: "application/pdf",
                 disposition: "inline" # "inline" to open in a new tab; "attachment" to force download
-    end
   end
 
   def process_import_for_staging
