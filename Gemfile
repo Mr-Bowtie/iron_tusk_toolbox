@@ -83,3 +83,7 @@ gem "bulma-rails", "~> 1.0"
 gem "dartsass-rails", "~> 0.5.1"
 
 gem "foreman", "~> 0.88.1"
+
+gem "prawn", "~> 2.5"
+
+gem "prawn-table", "~> 0.2.2"

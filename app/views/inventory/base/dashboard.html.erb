@@ -21,7 +21,7 @@
   </div>
 
   <div class="column is-one-third has-text-centered">
-    <%= form_with url: '/inventory/cards/generate_pull_sheet_from_csv', multipart: true, method: :post do |form| %>
+    <%= form_with url: '/inventory/cards/generate_pull_sheet_from_csv', multipart: true, method: :post, target: "_blank" do |form| %>
       <div class="field">
         <%= form.label "Generate Pull Sheet", class: "label" %>
         <div class="control">
