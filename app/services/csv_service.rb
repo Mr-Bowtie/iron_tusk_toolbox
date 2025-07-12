@@ -1,7 +1,6 @@
 require "csv"
 
 class CsvService < ApplicationService
-  
   # @param [CSV] import :a csv of cards to add quantity for
   # @param [String] format :the format of the import csv
   # @param [Integer] location :id of the location tag for the imported cards
@@ -60,15 +59,24 @@ class CsvService < ApplicationService
       # inventory_location_id: Inventory::Location.find_or_create_by(label: "Staging").id
     )
   end
-    
+
   PickedCard = Struct.new(
         "PickedCard",
         :name,
         :condition,
         :foil,
         :location_label,
-        :quantity
+        :quantity,
+        keyword_init: true
       )
+
+  PullError = Struct.new(
+    "PullError",
+    :message,
+    :data,
+    keyword_init: true
+  )
+
   PullResults = Struct.new("PullResults", :found_cards, :errors) do
     def initialize(*)
       super
@@ -78,6 +86,10 @@ class CsvService < ApplicationService
   end
 
   # TODO: Refactor the hell out of this
+
+  # @param [String] file_path location of manapool pull sheet generated with cli tool
+  #
+  # @return [CsvService::PullResults]
   def self.process_manapool_pull(file_path)
     results = PullResults.new
     CSV.foreach(file_path, headers: true) do |row|
@@ -92,7 +104,7 @@ class CsvService < ApplicationService
 
       # Log when a card is not found in inventory, process next card
       if cards.empty?
-        results.errors << { message: "no card found in inventory", card_data: row }
+        results.errors << PullError.new(message: "no card found in inventory", data: row)
         next
       end
 
@@ -100,7 +112,7 @@ class CsvService < ApplicationService
       card_count = cards&.reduce(0) { |memo, card| memo += card.quantity }
       cards_to_pull = row["quantity"].to_i
       if card_count < cards_to_pull
-        results[:errors] << { message: "Insufficient inventory quantity. Requested: #{row[:quantity]}, Found in inventory: #{cards.length}" }
+        results[:errors] << PullError.new(message: "Insufficient inventory quantity. Requested: #{row[:quantity]}, Found in inventory: #{cards.length}")
         cards_to_pull = card_count
       end
 
@@ -114,25 +126,25 @@ class CsvService < ApplicationService
 
         if active_card.quantity >= cards_to_pull
           pulled_cards = PickedCard.new(
-            active_card.metadata.name,
-            active_card.condition,
-            active_card.foil,
-            active_card.inventory_location.label,
-            cards_to_pull
+            name: active_card.metadata.name,
+            condition: active_card.condition,
+            foil: active_card.foil,
+            location_label: active_card.inventory_location.label,
+            quantity: cards_to_pull
           )
           results.found_cards << pulled_cards
           active_card.update(quantity: active_card.quantity - cards_to_pull)
           cards_to_pull = 0
-        
+
         else
           pulled_cards = PickedCard.new(
-            active_card.metadata.name,
-            active_card.condition,
-            active_card.foil,
-            active_card.inventory_location.label,
-            active_card.quantity
+            name: active_card.metadata.name,
+            condition: active_card.condition,
+            foil: active_card.foil,
+            location_label: active_card.inventory_location.label,
+            quantity: active_card.quantity
           )
-          
+
           results.found_cards << pulled_cards
           cards_to_pull -= active_card.quantity
           active_card.delete
