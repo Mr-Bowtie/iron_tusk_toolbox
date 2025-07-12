@@ -10,13 +10,14 @@ class Inventory::CardsController < ApplicationController
     case params[:format]
     when "manapool_pull"
       results = CsvService.process_manapool_pull(params[:csv].path)
+      binding.pry
     end
   end
 
   def process_import_for_staging
     CsvService.stage_import(params[:csv], "manabox")
 
-    redirect_to inventory_cards_staging_path
+    redirect_to inventory_staging_path
   end
 
   def staging
@@ -25,7 +26,7 @@ class Inventory::CardsController < ApplicationController
   def clear_staging
     @cards.delete_all
 
-    redirect_to inventory_cards_staging_path
+    redirect_to inventory_path
   end
 
   def convert_to_inventory
@@ -35,13 +36,13 @@ class Inventory::CardsController < ApplicationController
       # If new location label was entered, clear any input from existing location selection
       params[:existing_location_id] = ""
 
-    elsif params[:existing_location_id].length > 0 && params[:existing_location_id] != Inventory::Location.find_by(label: "Staging").id
+    elsif params[:existing_location_id].length > 0 
       location = Inventory::Location.find(params[:existing_location_id])
     end
 
     unless location.nil?
       @cards.update_all staged: false, inventory_location_id: location.id
-      redirect_to inventory_cards_path, notice: "Staging successfully converted to live inventory"
+      redirect_to inventory_path, notice: "Staging successfully converted to live inventory"
     else
       flash.now[:alert] = "Select an existing inventory location or enter a new location label"
       render :staging, status: :unprocessable_entity

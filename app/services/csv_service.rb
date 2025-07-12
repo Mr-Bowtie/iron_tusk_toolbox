@@ -50,7 +50,7 @@ class CsvService < ApplicationService
   def self.process_manabox_row_import(row)
     # INFO: we want to have seperate records for each card in each location
     Inventory::Card.create(
-      condition: row["Condition"],
+      condition: Inventory::Card.map_condition(row["Condition"]),
       scryfall_id: row["Scryfall ID"],
       foil: row["Foil"].downcase == "foil",
       quantity: row["Quantity"].to_i,
@@ -79,31 +79,31 @@ class CsvService < ApplicationService
 
   # TODO: Refactor the hell out of this
   def self.process_manapool_pull(file_path)
-    # TODO: utilize structs for these data data holders
     results = PullResults.new
     CSV.foreach(file_path, headers: true) do |row|
       # TODO: sort by location
 
       # Find all cards in all locations that match the current card datetime
-      cards = Inventory::Card.where(scryfall_id: row["scryfall_id"], condition: row["condition"], foil: row["foil"])
+      cards = Inventory::Card.where(
+        scryfall_id: row["scryfall_id"],
+        condition: Inventory::Card.map_condition(row["condition"]),
+        foil: Inventory::Card.map_foil(row["foil"])
+      ).to_a
 
-      binding.pry
       # Log when a card is not found in inventory, process next card
-      if cards.nil?
+      if cards.empty?
         results.errors << { message: "no card found in inventory", card_data: row }
         next
       end
 
       # Check to see if there is enough quantity in inventory to satisfy the pull sheet, if not log error and set pull quantity to total in stock
       card_count = cards&.reduce(0) { |memo, card| memo += card.quantity }
-      cards_to_pull = row["quantity"]
+      cards_to_pull = row["quantity"].to_i
       if card_count < cards_to_pull
         results[:errors] << { message: "Insufficient inventory quantity. Requested: #{row[:quantity]}, Found in inventory: #{cards.length}" }
         cards_to_pull = card_count
-        binding.pry
       end
 
-      binding.pry
 
       # Iterate over found cards and built pull list
       while cards_to_pull != 0
@@ -140,7 +140,6 @@ class CsvService < ApplicationService
 
       end
     end
-    binding.pry
     results
   end
 
