@@ -2,35 +2,66 @@ module Inventory
   class CardSearch
     attr_reader :params, :relation
 
-    def initialize(params = {}, relation: Inventory::Card.includes(:metadata, :inventory_location).references(:metadata, :inventory_location))
+    def initialize(params = {})
       @params = params
       @relation = relation
     end
 
     def results
-      scope = relation
+      query_strings = []
+      query_params = []
 
       if params[:name].present?
-        scope = scope.where("LOWER(card_metadata.name) LIKE ?", "%#{params[:name].downcase}%")
+        string = "LOWER(card_metadata.name) LIKE ?"
+        param = "%#{params[:name].downcase}%"
+
+        query_strings << string
+        query_params << param
       end
 
       if params[:set].present?
-        scope = scope.where("LOWER(card_metadata.set) LIKE ?", "%#{params[:set].downcase}%")
+        string = "LOWER(card_metadata.set) LIKE ?"
+        # make sure we can chain querys together 
+        string = " AND " + string if query_strings.length > 0
+        param = "%#{params[:set].downcase}%"
+
+        query_strings << string
+        query_params << param
       end
 
       if params[:collector_number].present?
-        scope = scope.where(card_metadata: { collector_number: params[:collector_number] })
+        string = "card_metadata.collector_number = ?"
+        string = " AND " + string if query_strings.length > 0
+        param = "#{params[:collector_number]}"
+
+        query_strings << string
+        query_params << param
       end
 
       if params[:condition].present?
-        scope = scope.where(condition: params[:condition])
+        string = "inventory_cards.condition = ?"
+        string = " AND " + string if query_strings.length > 0
+        param = "#{params[:condition]}"
+
+        query_strings << string
+        query_params << param
       end
 
       if params[:inventory_location_id].present?
-        scope = scope.where(inventory_location_id: params[:inventory_location_id])
+        string = "inventory_locations.id = ?"
+        string = " AND " + string if query_strings.length > 0
+        param = "#{params[:inventory_location_id]}"
+
+        query_strings << string
+        query_params << param
       end
 
-      scope
+      return nil unless query_strings.length > 0
+
+      query_template_string = query_strings.join
+      query_params.unshift(query_template_string)
+      Inventory::Card.includes(:metadata, :inventory_location).references(:metadata, :inventory_location).where(query_params)
+
     end
   end
 end

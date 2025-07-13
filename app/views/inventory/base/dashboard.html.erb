@@ -91,7 +91,7 @@
       <div class="field full-width" data-controller="choices">
         <%= f.label :condition, "Condition", class: "label" %>
         <div class="control">
-          <%= f.select :condition, options_for_select(Inventory::Card.conditions.keys.map { |c| [c.titleize, c] }, params.dig(:search, :condition)), include_blank: true, class: "input" %>
+          <%= f.select :condition, options_for_select(Inventory::Card.conditions.map { |label, id| [label.titleize, id] }, params.dig(:search, :condition)), include_blank: true, class: "input" %>
         </div>
       </div>
 
@@ -105,10 +105,10 @@
     <%= f.submit "Search", class: "button is-primary is-outlined" %>
   <% end %>
 
-  <% if @search_cards.any? %>
+  <% unless @search_cards.nil? || @search_cards.length == 0 %>
     <div class="mt-6">
     <%== pagy_bulma_nav(@pagy) %>
-    <div class="columns is-multiline">
+    <div class="columns is-multiline mt-4">
       <% @search_cards.each do |card|%>
         <div class="column is-narrow is-2">
           <%= render card %>

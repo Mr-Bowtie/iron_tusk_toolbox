@@ -11,7 +11,7 @@ export default class extends Controller {
 
  showCardModal(){
     // card ids are in the form "inventory_card_1234", we want to grab the number at the end of the string
-    const cardId = this.element.id.split("_").at(-1);
+    const cardId = this.element.id.split("_").at(-1) ;
     const modalElement = document.querySelector(`[data-card-quick-view-id="${cardId}"]`);
     const htmlElement = document.querySelector('html')
 

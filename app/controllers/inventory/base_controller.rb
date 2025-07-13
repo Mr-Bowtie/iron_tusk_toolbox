@@ -3,7 +3,10 @@ class Inventory::BaseController < ApplicationController
 
   # GET /inventory/
   def dashboard
-    @pagy, @search_cards = pagy(Inventory::CardSearch.new(search_params).results)
+    search_results = (Inventory::CardSearch.new(search_params).results)
+    unless search_results.nil? 
+      @pagy, @search_cards = pagy(search_results)
+    end
     @locations = Inventory::Location.all
     @inventory_card_count = Inventory::Card.sum(:quantity)
     @pull_items = PullItem.all.each_with_object({}) do |item, memo|
@@ -18,7 +21,7 @@ class Inventory::BaseController < ApplicationController
   private
 
   def search_params
-    params.require(:search).permit(
+    params.fetch(:search, {}).permit(
       :name,
       :set,
       :collector_number,
