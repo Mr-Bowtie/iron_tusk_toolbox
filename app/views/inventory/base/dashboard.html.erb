@@ -112,6 +112,7 @@
       <% @search_cards.each do |card|%>
         <div class="column is-narrow is-2">
           <%= render card %>
+          <%= render partial: "inventory/cards/quick_view", locals: { card: card } %>
         </div>
       <% end %>
     </div>

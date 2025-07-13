@@ -9,3 +9,6 @@ application.register("choices", ChoicesController)
 
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import QuickViewController from "./quick_view_controller"
+application.register("quick-view", QuickViewController)
