@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_11_032024) do
+ActiveRecord::Schema[7.2].define(version: 2025_07_13_020136) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -167,6 +167,24 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_11_032024) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "pull_errors", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "message"
+    t.integer "item_type"
+    t.jsonb "data"
+  end
+
+  create_table "pull_items", force: :cascade do |t|
+    t.integer "inventory_type"
+    t.integer "quantity", null: false
+    t.bigint "inventory_location_id", null: false
+    t.jsonb "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["inventory_location_id"], name: "index_pull_items_on_inventory_location_id"
+  end
+
   create_table "sync_statuses", force: :cascade do |t|
     t.string "sync_type", null: false
     t.datetime "last_synced_at"
@@ -182,4 +200,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_11_032024) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "pull_items", "inventory_locations"
 end

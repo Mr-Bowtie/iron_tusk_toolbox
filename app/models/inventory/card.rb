@@ -34,6 +34,30 @@ class Inventory::Card < ApplicationRecord
     :damaged
   ]
 
+  def pull!(amount: 0, all_in_location: false)
+    amount = all_in_location ? self.quantity : amount
+
+    ActiveRecord::Base.transaction do
+      PullItem.create!(
+        inventory_type: "card",
+        quantity: amount,
+        inventory_location: inventory_location,
+        data: {
+          name: metadata.name,
+          set_code: metadata.set,
+          number: metadata.collector_number,
+          scryfall_id: self.scryfall_id,
+          foil: self.foil,
+          condition: self.condition,
+          card_metadatum_id: self.card_metadatum_id
+          }
+      )
+    end
+
+    self.quantity -= amount
+    self.quantity.zero? ? self.destroy! : self.save!
+  end
+
   # @param [String] condition
   #
   # this normalizes conditions from fields in csv's getting processed

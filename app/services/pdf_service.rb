@@ -1,24 +1,26 @@
 class PdfService < ApplicationService
-  # @param results [CsvService::PullResults]
-  def self.generate_pull_sheet(pull_results)
+  # TODO: handle pulling different inventory types
+  def self.generate_pull_sheet
+    pull_items = PullItem.all
+    pull_errors = PullError.all
     Prawn::Document.new.tap do |pdf|
       pdf.text "Pull Sheet", size: 24, style: :bold, align: :center
       pdf.move_down 20
 
-      if pull_results.found_cards.any?
+      if pull_items.any?
         pdf.text "Picked Cards", size: 18, style: :bold
         pdf.move_down 10
 
         data = [ [ "Location", "Quantity", "Name", "Condition", "Foil", "Set", "Number" ] ] +
-              pull_results.found_cards.map do |card|
+              pull_items.map do |card|
                 [
-                  card.location_label,
+                  card.inventory_location.label,
                   card.quantity,
-                  card.name,
-                  card.condition,
-                  card.foil ? "Yes" : "No",
-                  card.set_code,
-                  card.number
+                  card.data["name"],
+                  card.data["condition"],
+                  card.data["foil"] ? "Yes" : "No",
+                  card.data["set_code"],
+                  card.data["number"]
                 ]
               end
 
@@ -29,13 +31,13 @@ class PdfService < ApplicationService
         pdf.move_down 20
       end
 
-      if pull_results.errors.any?
+      if pull_errors.any?
         pdf.text "Errors", size: 18, style: :bold, color: "FF0000"
         pdf.move_down 10
 
-        pull_results.errors.each_with_index do |error, index|
+        pull_errors.each_with_index do |error, index|
           pdf.text "#{index + 1}. #{error.message}", size: 12, style: :bold
-          pdf.text error.data.error_string, size: 10, indent_paragraphs: 20
+          pdf.text error.data_string, size: 10, indent_paragraphs: 20
           pdf.move_down 10
         end
       end

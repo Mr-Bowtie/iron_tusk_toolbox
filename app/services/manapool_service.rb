@@ -40,7 +40,6 @@ class ManapoolService < ApplicationService
         piece = item["product"]
 
         card_data = piece["single"]
-        binding.pry
         cards_details << {
           scryfall_id: card_data["scryfall_id"],
           card_name: card_data["name"],

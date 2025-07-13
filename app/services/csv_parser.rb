@@ -1,3 +1,4 @@
+require 'csv'
 class CsvParser
   def self.parse(file_path, headers: true)
     Enumerator.new do |yielder|

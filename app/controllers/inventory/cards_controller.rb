@@ -6,20 +6,43 @@ class Inventory::CardsController < ApplicationController
   def index
   end
 
-  def generate_pull_sheet_from_csv
-      results = Inventory::Puller.process(file_path: params[:csv].path, format: params[:format])
-      pdf_data = PdfService.generate_pull_sheet(results)
+  def pull_inventory
+    if PullItem.any?
+      flash.now[:alert] = "Process items ready to pull before adding more"
+    else
+      Inventory::Puller.process(file_path: params[:csv].path, format: params[:format])
+    end
+
+    redirect_to inventory_path
+  end
+
+  def generate_pull_sheet
+    pdf_data = PdfService.generate_pull_sheet
 
       send_data pdf_data,
                 filename: "it_pullsheet_#{Time.now.strftime('%y%m%d-%H%M')}.pdf",
                 type: "application/pdf",
-                disposition: "inline" # "inline" to open in a new tab; "attachment" to force download
+                disposition: "inline"
   end
 
   def process_import_for_staging
     CsvService.stage_import(params[:csv], "manabox")
 
     redirect_to inventory_cards_staging_path
+  end
+
+  def mark_items_pulled
+    PullItem.delete_all
+    PullError.delete_all
+
+    redirect_to inventory_path
+  end
+
+  def revert_pull
+    PullItem.all.each(&:undo!)
+    PullError.delete_all
+
+    redirect_to inventory_path
   end
 
   def staging
@@ -38,7 +61,7 @@ class Inventory::CardsController < ApplicationController
       # If new location label was entered, clear any input from existing location selection
       params[:existing_location_id] = ""
 
-    elsif params[:existing_location_id].length > 0 
+    elsif params[:existing_location_id].length > 0
       location = Inventory::Location.find(params[:existing_location_id])
     end
 
