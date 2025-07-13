@@ -62,8 +62,60 @@
   </div>
 <% end %>
 
-<% if !flash[:messages].nil? && !flash[:messages].empty?  %>
-  <%= flash[:messages] %>
-<% end %>
+<div class="mt-4">
+  <h2 class="subtitle is-2">Search Card Inventory</h2>
 
+  <%= form_with url: inventory_path, method: :get, scope: :search, local: true do |f| %>
+    <div class="field">
+      <%= f.label :name, "Name", class: "label" %>
+      <div class="control">
+        <%= f.text_field :name, value: params.dig(:search, :name), class: "input" %>
+      </div>
+    </div>
+
+    <div class="level">
+      <div class="field full-width">
+        <%= f.label :set, "Set Code", class: "label" %>
+        <div class="control">
+          <%= f.text_field :set, value: params.dig(:search, :set), class: "input" %>
+        </div>
+      </div>
+
+      <div class="field full-width">
+        <%= f.label :collector_number, "Collector Number", class: "label" %>
+        <div class="control">
+          <%= f.text_field :collector_number, value: params.dig(:search, :collector_number), class: "input" %>
+        </div>
+      </div>
+
+      <div class="field full-width" data-controller="choices">
+        <%= f.label :condition, "Condition", class: "label" %>
+        <div class="control">
+          <%= f.select :condition, options_for_select(Inventory::Card.conditions.keys.map { |c| [c.titleize, c] }, params.dig(:search, :condition)), include_blank: true, class: "input" %>
+        </div>
+      </div>
+
+      <div class="field full-width" data-controller="choices">
+        <%= f.label :inventory_location_id, "Location", class: "label" %>
+        <div class="control">
+          <%= f.select :inventory_location_id, options_from_collection_for_select(@locations, :id, :label, params.dig(:search, :inventory_location_id)), include_blank: true, class: "input" %>
+        </div>
+      </div>
+    </div>
+    <%= f.submit "Search", class: "button is-primary is-outlined" %>
+  <% end %>
+
+  <% if @search_cards.any? %>
+    <div class="mt-6">
+    <%== pagy_bulma_nav(@pagy) %>
+    <div class="columns is-multiline">
+      <% @search_cards.each do |card|%>
+        <div class="column is-narrow is-2">
+          <%= render card %>
+        </div>
+      <% end %>
+    </div>
+    </div>
+  <% end %>
+</div>
 

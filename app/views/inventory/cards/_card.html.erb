@@ -1,2 +1,36 @@
-<div id="<%= dom_id card %>">
+<div
+  id="<%= dom_id card %>"
+  class="is-flex is-flex-direction-column is-align-items-center"
+>
+  <div class="level">
+    <p
+      class="
+        has-background-grey-dark has-text-white has-text-weight-bold has-text-centered
+        px-2
+      "
+      style="bottom: 6%; position: relative"
+    >
+      <%= card.quantity %>
+    </p>
+    <p class="has-background-grey-dark px-2 <%= condition_class(card.condition) %>">
+      <%= condition_decorator(card.condition) %>
+    </p>
+    <% if card.foil %>
+      <p><b class="has-text-info">Foil</b></p>
+    <% end %>
+  </div>
+
+  <% if card.metadata.image_uris.length > 0 %>
+    <%= image_tag card.metadata.image_uris["png"], class: "image" %>
+  <% elsif card.metadata.front_image_uris.length > 0 %>
+    <%= image_tag card.metadata.front_image_uris["small"], class: "image" %>
+  <% else %>
+    <p>No Image Found</p>
+  <% end %>
+
+  <p><%= card.metadata.set.upcase %>
+    #<%= card.metadata.collector_number %></p>
+  <p><b>Location:</b>
+    <%= card.inventory_location.label %></p>
+
 </div>

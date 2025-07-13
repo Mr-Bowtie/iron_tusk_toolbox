@@ -87,3 +87,5 @@ gem "foreman", "~> 0.88.1"
 gem "prawn", "~> 2.5"
 
 gem "prawn-table", "~> 0.2.2"
+
+gem "pagy", "~> 9.3"

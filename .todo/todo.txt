@@ -1,7 +1,3 @@
-(A) Refactor inventory pulling process
-(A) create PullItem model
-(A) write converters for Inventory<->PullItem 
-(A) wire up actions to put PulledItem's back in inventory
 (B) add search for inventory 
 (B) wire up single card data updating
-
+(B) add single card quick view/update form
