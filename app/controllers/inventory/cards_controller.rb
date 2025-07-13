@@ -117,7 +117,7 @@ class Inventory::CardsController < ApplicationController
   def update
     respond_to do |format|
       if @inventory_card.update(inventory_card_params)
-        format.html { redirect_to @inventory_card, notice: "Card was successfully updated." }
+        format.html { redirect_back_or_to inventory_path(search: params[:search]), notice: "Card was successfully updated." }
         format.json { render :show, status: :ok, location: @inventory_card }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -144,7 +144,7 @@ class Inventory::CardsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def inventory_card_params
-      params.require(:inventory_card, {})
+      params.require(:inventory_card).permit(:quantity, :foil, :condition, :inventory_location_id)
     end
 
     def set_staged_cards

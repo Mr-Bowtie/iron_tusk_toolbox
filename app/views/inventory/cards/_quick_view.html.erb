@@ -4,7 +4,7 @@
   data-controller="quick-view"
 >
   <div class="modal-background" data-action="click->quick-view#close"></div>
-  <div class="modal-content">
+  <div class="modal-content is-flex is-align-items-center" style="width: 60%;">
     <div>
       <% if card.metadata.image_uris.length > 0 %>
         <%= image_tag card.metadata.image_uris["png"], class: "image" %>
@@ -14,34 +14,40 @@
         <p>No Image Found</p>
       <% end %>
     </div>
-    <div class="is-flex is-flex-direction-column">
+    <div class="is-flex is-flex-direction-column ml-4">
       <p><b><%= card.metadata.set_name %></b></p>
       <%= form_with model: card do |form| %>
 
-        <div class="field">
-          <%= form.label :quantity %>
+        <div class="field level">
+          <%= form.label :quantity, class: "label" %>
           <div class="control">
-            <%= form.number_field :quantity ,min: 1 %>
+            <%= form.number_field :quantity ,min: 1, class: "input" %>
           </div>
         </div>
 
 
-        <div class="field">
-          <%= form.label :foil %>
+        <div class="field is-flex is-align-items-flex-start">
+          <%= form.label :foil, class: "label mr-2" %>
           <div class="control">
+            <%= form.select :foil, [["Foil", true], ["Normal", false]] %>
           </div>
         </div>
-        <div class="field">
-          <%= form.label :condition %>
+        <div class="field" data-controller="choices">
+          <%= form.label :condition, class: "label"%>
           <div class="control">
+            <%= form.select :condition, Inventory::Card.conditions.map {|c, i| [c.titleize, c]} %>
           </div>
         </div>
-        <div class="field">
-          <%= form.label :inventory_location %>
+        <div class="field" data-controller="choices">
+          <%= form.label :inventory_location, class: "label" %>
           <div class="control">
+            <%= form.select :inventory_location_id, locations.map {|loc| [loc.label, loc.id]} %>
           </div>
         </div>
 
+        <div class="mt-4">
+          <%= form.submit "Save", class: "button is-large is-primary" %>
+        </div>
       <% end %> 
     </div>
 
