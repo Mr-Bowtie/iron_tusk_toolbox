@@ -14,5 +14,6 @@
     "bulma": "^1.0.4",
     "choices.js": "^11.1.0",
     "sass": "^1.83.4"
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
