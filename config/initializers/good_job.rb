@@ -1,4 +1,8 @@
 Rails.application.configure do
+  config.active_job.queue_adapter = :good_job
+  
+  config.good_job.preserve_job_records
+
   # Configure GoodJob to use PostgreSQL
   config.good_job.execution_mode = :async
   config.good_job.queues = '*'

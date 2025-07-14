@@ -89,3 +89,7 @@ gem "prawn", "~> 2.5"
 gem "prawn-table", "~> 0.2.2"
 
 gem "pagy", "~> 9.3"
+
+gem "dockerfile-rails", ">= 1.7", :group => :development
+
+gem "json-streamer", "~> 2.1"

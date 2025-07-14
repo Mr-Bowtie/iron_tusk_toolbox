@@ -1,7 +1,20 @@
 require "net/http"
+require "open-uri"
 require "benchmark"
+require "json/streamer"
 
 class ScryfallSyncService < ApplicationService
+  
+  @@sync_in_progress = false
+
+  def self.sync_in_progress
+    @@sync_in_progress
+  end
+
+  def self.sync_in_progress=(value)
+    @@sync_in_progress = value
+  end
+
   SCRYFALL_BULK_DATA_URL = "https://api.scryfall.com/bulk-data/default-cards"
   BATCH_SIZE = 1000
 
@@ -43,14 +56,13 @@ class ScryfallSyncService < ApplicationService
   private
 
   def perform_sync
+    self.class.sync_in_progress = true
     Rails.logger.info "Fetching Scryfall bulk data metadata..."
     bulk_metadata = fetch_bulk_metadata
-
+    
     Rails.logger.info "Downloading bulk data file..."
-    raw_data = download_bulk_data(bulk_metadata["download_uri"])
+    store_bulk_data(bulk_metadata["download_uri"])
 
-    Rails.logger.info "Processing and importing data..."
-    import_data(raw_data)
 
     # Update sync status
     update_sync_status
@@ -67,20 +79,17 @@ class ScryfallSyncService < ApplicationService
     parsed_response
   end
 
-  def download_bulk_data(download_uri)
+  def store_bulk_data(download_uri)
     uri = URI(download_uri)
 
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true if uri.scheme == "https"
-
-    request = Net::HTTP::Get.new(uri)
-    response = http.request(request)
-
-    unless response.code == "200"
-      raise "Failed to download bulk data: HTTP #{response.code}"
+    URI.open(uri) do |io|
+      streamer = Json::Streamer.parser(file_io: io, chunk_size: 500)
+      streamer.get(nesting_level:1) do |object|
+        ScryfallCardDataScraperJob.perform_later(card_data: object)
+      end
     end
 
-    FastJsonparser.parse(response.body)
+
   end
 
   def import_data(json_data)
