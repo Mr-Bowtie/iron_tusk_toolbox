@@ -17,6 +17,8 @@ class Inventory::CardsController < ApplicationController
   end
 
   def generate_pull_sheet
+    @pull_items = PullItem.includes(:inventory_location).all.order("inventory_locations.label ASC")
+    @pull_errors = PullError.all
     pdf_data = PdfService.generate_pull_sheet
 
       send_data pdf_data,
