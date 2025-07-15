@@ -23,7 +23,7 @@
   </div>
 
   <% if card.metadata.image_uris.length > 0 %>
-    <%= image_tag card.metadata.image_uris["png"], class: "image" %>
+    <%= image_tag card.metadata.image_uris["normal"], class: "image" %>
   <% elsif card.metadata.front_image_uris.length > 0 %>
     <%= image_tag card.metadata.front_image_uris["small"], class: "image" %>
   <% else %>
@@ -32,7 +32,9 @@
 
   <p><%= card.metadata.set.upcase %>
     #<%= card.metadata.collector_number %></p>
-  <p><b>Location:</b>
-    <%= card.inventory_location.label %></p>
+  <% if card.inventory_location %>
+    <p><b>Location:</b>
+      <%= card.inventory_location.label %></p>
+  <% end %>
 
 </div>

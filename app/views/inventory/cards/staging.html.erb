@@ -36,8 +36,9 @@
 <div class="columns is-multiline is-flex-wrap-wrap is-align-items-baseline">
   <% unless @cards.empty? || @cards.nil? %>
     <% @cards.each do |card| %>
-      <div class="column is-narrow">
+      <div class="column is-narrow is-2">
         <%= render card %>
+        <%= render partial: "inventory/cards/quick_view", locals: { card: card, locations: @locations } %>
       </div>
     <% end %>
   <% else %>

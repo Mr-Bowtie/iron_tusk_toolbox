@@ -4,13 +4,19 @@ class ScryfallDataSyncJob < ApplicationJob
   def perform(force_update: false)
     Rails.logger.info "Starting Scryfall data sync job (force_update: #{force_update})"
 
+
     begin
       sync_service = ScryfallSyncService.new
 
-      # Perform the sync
-      result = sync_service.sync_data
+      if sync_service.update_needed? || force_update
+        # Perform the sync
+        sync_service.sync_data
+        Rails.logger.info "Scryfall sync completed successfully: !"
 
-      Rails.logger.info "Scryfall sync completed successfully: !"
+      else
+        Rails.logger.info "No update needed"
+
+      end
 
       # Optionally notify about completion
       # NotificationService.notify_sync_complete(result) if defined?(NotificationService)
@@ -26,4 +32,3 @@ class ScryfallDataSyncJob < ApplicationJob
     end
   end
 end
-

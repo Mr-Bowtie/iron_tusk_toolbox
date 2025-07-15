@@ -1,3 +1,4 @@
 (B) add search for inventory 
 (B) wire up single card data updating
 (B) add single card quick view/update form
+(C) add scryfall sync status monitoring

@@ -93,3 +93,7 @@ gem "pagy", "~> 9.3"
 gem "dockerfile-rails", ">= 1.7", :group => :development
 
 gem "json-streamer", "~> 2.1"
+
+gem "yajl-ffi", "~> 1.0"
+
+gem "activerecord-import", "~> 2.2"

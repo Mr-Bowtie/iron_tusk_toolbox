@@ -46,6 +46,7 @@ class Inventory::CardsController < ApplicationController
   end
 
   def staging
+    @locations = Inventory::Location.all
   end
 
   def clear_staging
@@ -65,7 +66,7 @@ class Inventory::CardsController < ApplicationController
       location = Inventory::Location.find(params[:existing_location_id])
     end
 
-    unless location.nil?
+    unless location.nil? || !location.valid?
       @cards.update_all staged: false, inventory_location_id: location.id
       redirect_to inventory_path, notice: "Staging successfully converted to live inventory"
     else

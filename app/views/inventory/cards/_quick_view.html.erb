@@ -21,10 +21,9 @@
         <div class="field level">
           <%= form.label :quantity, class: "label" %>
           <div class="control">
-            <%= form.number_field :quantity ,min: 1, class: "input" %>
+            <%= form.number_field :quantity, min: 1, class: "input" %>
           </div>
         </div>
-
 
         <div class="field is-flex is-align-items-flex-start">
           <%= form.label :foil, class: "label mr-2" %>
@@ -33,22 +32,26 @@
           </div>
         </div>
         <div class="field" data-controller="choices">
-          <%= form.label :condition, class: "label"%>
+          <%= form.label :condition, class: "label" %>
           <div class="control">
-            <%= form.select :condition, Inventory::Card.conditions.map {|c, i| [c.titleize, c]} %>
+            <%= form.select :condition,
+                        Inventory::Card.conditions.map { |c, i| [c.titleize, c] } %>
           </div>
         </div>
-        <div class="field" data-controller="choices">
-          <%= form.label :inventory_location, class: "label" %>
-          <div class="control">
-            <%= form.select :inventory_location_id, locations.map {|loc| [loc.label, loc.id]} %>
+
+        <% unless card.staged %>
+          <div class="field" data-controller="choices">
+            <%= form.label :inventory_location, class: "label" %>
+            <div class="control">
+              <%= form.select :inventory_location_id, locations.map { |loc| [loc.label, loc.id] } %>
+            </div>
           </div>
-        </div>
+        <% end %>
 
         <div class="mt-4">
           <%= form.submit "Save", class: "button is-large is-primary" %>
         </div>
-      <% end %> 
+      <% end %>
     </div>
 
   </div>
