@@ -17,14 +17,12 @@ class Inventory::CardsController < ApplicationController
   end
 
   def generate_pull_sheet
-    @pull_items = PullItem.includes(:inventory_location).all.order("inventory_locations.label ASC")
-    @pull_errors = PullError.all
     pdf_data = PdfService.generate_pull_sheet
 
-      send_data pdf_data,
-                filename: "it_pullsheet_#{Time.now.strftime('%y%m%d-%H%M')}.pdf",
-                type: "application/pdf",
-                disposition: "inline"
+    send_data pdf_data,
+              filename: "it_pullsheet_#{Time.now.strftime('%y%m%d-%H%M')}.pdf",
+              type: "application/pdf",
+              disposition: "inline"
   end
 
   def process_import_for_staging
