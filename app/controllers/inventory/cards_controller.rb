@@ -73,6 +73,8 @@ class Inventory::CardsController < ApplicationController
       redirect_to inventory_path, notice: "Staging successfully converted to live inventory"
     else
       flash.now[:alert] = "Select an existing inventory location or enter a new location label"
+
+      @pagy, @staged_cards = pagy(@cards)
       render :staging, status: :unprocessable_entity
     end
   end

@@ -2,9 +2,9 @@
   data-controller="quick-view"
   data-action="click->quick-view#showCardModal"
   id="<%= dom_id card %>"
-  class="is-flex is-flex-direction-column is-align-items-center"
+  class="is-flex is-flex-direction-column is-align-items-center card"
 >
-  <div class="level">
+  <div class="level is-mobile">
     <p
       class="
         has-background-grey-dark has-text-white has-text-weight-bold has-text-centered
@@ -22,14 +22,20 @@
     <% end %>
   </div>
 
+  <% foil_class = card.foil ? "is-foil-card" : "" %> 
   <% if card.metadata.image_uris.length > 0 %>
-    <%= image_tag card.metadata.image_uris["normal"], loading: "lazy", class: "image" %>
+    <div class="<%= foil_class %> image">
+      <%= image_tag card.metadata.image_uris["normal"], loading: "lazy" %>
+    </div>
   <% elsif card.metadata.front_image_uris.length > 0 %>
-    <%= image_tag card.metadata.front_image_uris["small"], loading: "lazy",class: "image" %>
+    <div class="<%= foil_class %> image">
+      <%= image_tag card.metadata.front_image_uris["small"], loading: "lazy" %>
+    </div>
   <% else %>
     <p>No Image Found</p>
   <% end %>
 
+  <p class="has-text-centered"><b><%= card.metadata.name %></b></p>
   <p><%= card.metadata.set.upcase %>
     #<%= card.metadata.collector_number %></p>
   <% if card.inventory_location %>
