@@ -1,6 +1,4 @@
-x 2025-07-13 Refactor inventory pulling process
-x 2025-07-13 create PullItem model
-x 2025-07-13 write converters for Inventory<->PullItem 
-x 2025-07-13 wire up actions to put PulledItem's back in inventory
-(B) add search for inventory 
-(B) wire up single card data updating
+x 2025-07-17 add search for inventory 
+x 2025-07-17 wire up single card data updating
+x 2025-07-17 add single card quick view/update form
+(C) add scryfall sync status monitoring
