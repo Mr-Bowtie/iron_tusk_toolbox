@@ -1,0 +1,2 @@
+(C) add scryfall sync status monitoring
+(B) add input to set condition for all staging items

@@ -39,6 +39,10 @@ gem "bootsnap", require: false
 
 gem "fast_jsonparser"
 
+# Job scheduling and background processing
+gem "good_job"  # PostgreSQL-based background jobs
+gem "whenever", require: false  # For cron job scheduling
+
 group :development, :test do
   gem "pry-byebug"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -73,3 +77,23 @@ group :test do
   gem "rspec"
   gem "rspec-rails"
 end
+
+gem "bulma-rails", "~> 1.0"
+
+gem "dartsass-rails", "~> 0.5.1"
+
+gem "foreman", "~> 0.88.1"
+
+gem "prawn", "~> 2.5"
+
+gem "prawn-table", "~> 0.2.2"
+
+gem "pagy", "~> 9.3"
+
+gem "dockerfile-rails", ">= 1.7", :group => :development
+
+gem "json-streamer", "~> 2.1"
+
+gem "yajl-ffi", "~> 1.0"
+
+gem "activerecord-import", "~> 2.2"

@@ -1,0 +1,12 @@
+<% content_for :title, "Editing location" %>
+
+<h1>Editing location</h1>
+
+<%= render "form", inventory_location: @inventory_location %>
+
+<br>
+
+<div>
+  <%= link_to "Show this location", @inventory_location %> |
+  <%= link_to "Back to locations", inventory_locations_path %>
+</div>

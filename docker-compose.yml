@@ -4,7 +4,7 @@ services:
     stdin_open: true
     build:
       context: .
-      dockerfile: ./Dockerfile.development
+      dockerfile: ./Dockerfile
     image: $PROJECT_NAME:latest
     container_name: $PROJECT_NAME-web
     environment: 
@@ -22,6 +22,7 @@ services:
     init: true
     ports:
       - "9998:3000"
+      - "9999:5000"
     volumes:
       - ./:/rails:delegated
       - gem_cache:/rails/vendor/bundle

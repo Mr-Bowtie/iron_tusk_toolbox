@@ -14,6 +14,8 @@ else
   echo "No server lock to worry about"
 fi
 
+yarn install
+
 bundle exec rails db:prepare
 
-bundle exec rails server --binding=0.0.0.0
+bundle exec foreman start -f Procfile.dev

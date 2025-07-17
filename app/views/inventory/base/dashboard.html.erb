@@ -1,0 +1,128 @@
+<% content_for :title, "Dashboard" %>
+
+<div class="level">
+  <h1 class="title is-1 has-text-centered">Inventory Dashboard</h1>
+  <%= link_to "Go to Staging", inventory_cards_staging_path, class: "button"%>
+</div>
+
+<div class="columns is-centered">
+  <div class="column is-one-third has-text-centered">
+    <%= form_with url: '/inventory/cards/process_import_for_staging', multipart: true, method: :post do |form| %>
+      <div class="field">
+        <%= form.label "Upload and Add Inventory", class: "label" %>
+        <div class="control">
+          <%= form.file_field :csv, accept: "text/csv", class: "input" %>
+        </div>
+      </div>
+      <div>
+        <%= form.submit "Upload", class: "button is-primary has-text-offwhite" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="column is-one-third has-text-centered">
+    <%= form_with url: '/inventory/cards/pull_inventory', multipart: true, method: :post, target: "_blank" do |form| %>
+      <div class="field">
+        <%= form.label "Pull items from CSV", class: "label" %>
+        <div class="control">
+          <%= form.file_field :csv, accept: "text/csv", class: "input" %>
+        </div>
+      </div>
+      <div class="field">
+        <%= form.label "Format", class: "label" %>
+        <div class="control">
+          <%= form.select :format, [['ManaPool Pullsheet', 'manapool_csv']] %>
+        </div>
+      </div>
+      <div>
+        <%= form.submit "Pull", class: "button is-primary has-text-offwhite" %>
+      </div>
+    <% end %>
+
+  </div>
+</div>
+
+<div>
+  <h2 class="subtitle">Cards in Inventory: <%= @inventory_card_count %></h2>
+</div>
+
+<% if @pull_items.length > 0 || @pull_errors.length > 0 %>
+  <div>
+    <h2 class="subtitle is-2">Inventory ready to pull</h2>
+    <% @pull_errors.each do |error| %>
+      <p><b><%= error.message %></b></p>
+      <p><%= error.data_string %></p>
+    <% end %>
+    <% @pull_items.each do |type, quantity| %>
+      <p><%= type%>: <%= quantity%></p>
+    <% end %>
+    <%= link_to "generate Pull Sheet", inventory_cards_generate_pull_sheet_path, target: "_blank", class: "button is-info" %>
+    <%= button_to "Mark all items pulled", inventory_cards_mark_items_pulled_path, class: "button is-primary", form: { data: { turbo_confirm: "Are you sure? this will clear out all items to be pulled"}} %>
+    <% if @pull_items.length > 0 %>
+      <%= button_to "Revert pull items back to inventory", inventory_cards_revert_pull_path, class: "button is-warning" %>
+    <% end %>
+  </div>
+<% else %>
+  <div>
+    <p>no items to pull</p>
+  </div>
+<% end %>
+
+<div class="mt-4">
+  <h2 class="subtitle is-2">Search Card Inventory</h2>
+
+  <%= form_with url: inventory_path, method: :get, scope: :search, local: true do |f| %>
+    <div class="field">
+      <%= f.label :name, "Name", class: "label" %>
+      <div class="control">
+        <%= f.text_field :name, value: params.dig(:search, :name), class: "input" %>
+      </div>
+    </div>
+
+    <div class="level">
+      <div class="field full-width">
+        <%= f.label :set, "Set Code", class: "label" %>
+        <div class="control">
+          <%= f.text_field :set, value: params.dig(:search, :set), class: "input" %>
+        </div>
+      </div>
+
+      <div class="field full-width">
+        <%= f.label :collector_number, "Collector Number", class: "label" %>
+        <div class="control">
+          <%= f.text_field :collector_number, value: params.dig(:search, :collector_number), class: "input" %>
+        </div>
+      </div>
+
+      <div class="field full-width" data-controller="choices">
+        <%= f.label :condition, "Condition", class: "label" %>
+        <div class="control">
+          <%= f.select :condition, options_for_select(Inventory::Card.conditions.map { |label, id| [label.titleize, id] }, params.dig(:search, :condition)), include_blank: true, class: "input" %>
+        </div>
+      </div>
+
+      <div class="field full-width" data-controller="choices">
+        <%= f.label :inventory_location_id, "Location", class: "label" %>
+        <div class="control">
+          <%= f.select :inventory_location_id, options_from_collection_for_select(@locations, :id, :label, params.dig(:search, :inventory_location_id)), include_blank: true, class: "input" %>
+        </div>
+      </div>
+    </div>
+    <%= f.submit "Search", class: "button is-primary is-outlined" %>
+  <% end %>
+
+  <% unless @search_cards.nil? || @search_cards.length == 0 %>
+    <div class="mt-6">
+    <%== pagy_bulma_nav(@pagy) %>
+    <div class="columns is-multiline mt-4">
+      <% @search_cards.each do |card|%>
+        <div class="column is-narrow is-2">
+          <%= render card %>
+          <%= render partial: "inventory/cards/quick_view", locals: { card: card, locations: @locations } %>
+        </div>
+      <% end %>
+    </div>
+    </div>
+  <% end %>
+</div>
+

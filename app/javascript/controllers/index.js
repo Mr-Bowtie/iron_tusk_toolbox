@@ -4,5 +4,11 @@
 
 import { application } from "./application"
 
+import ChoicesController from "./choices_controller"
+application.register("choices", ChoicesController)
+
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import QuickViewController from "./quick_view_controller"
+application.register("quick-view", QuickViewController)
