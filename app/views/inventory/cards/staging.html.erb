@@ -33,15 +33,23 @@
     <%= form.submit "Convert to inventory", class: "button is-primary level-right" %>
 <% end %>
 
-<div class="columns is-multiline is-flex-wrap-wrap is-align-items-baseline">
-  <% unless @cards.empty? || @cards.nil? %>
-    <% @cards.each do |card| %>
-      <div class="column is-narrow is-2">
-        <%= render card %>
-        <%= render partial: "inventory/cards/quick_view", locals: { card: card, locations: @locations } %>
-      </div>
+<div>
+  <div class="level">
+    <div class="level-left"></div>
+    <div class="level-right">
+      <%== pagy_bulma_nav(@pagy) %>
+    </div>
+  </div>
+  <div class="columns is-multiline is-flex-wrap-wrap is-align-items-baseline mt-4">
+    <% unless @staged_cards.empty? || @staged_cards.nil? %>
+      <% @staged_cards.each do |card| %>
+        <div class="column is-narrow is-2">
+          <%= render card %>
+          <%= render partial: "inventory/cards/quick_view", locals: { card: card, locations: @locations } %>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="column is-size-3 has-text-centered">No Cards Staged</p>
     <% end %>
-  <% else %>
-    <p class="column is-size-3 has-text-centered">No Cards Staged</p>
-  <% end %>
+  </div>
 </div>

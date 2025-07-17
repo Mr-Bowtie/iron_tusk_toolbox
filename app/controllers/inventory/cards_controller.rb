@@ -1,4 +1,5 @@
 class Inventory::CardsController < ApplicationController
+  include Pagy::Backend
   before_action :set_staged_cards, only: %i[ staging clear_staging convert_to_inventory ]
   before_action :set_inventory_card, only: %i[ show edit update destroy ]
 
@@ -46,6 +47,7 @@ class Inventory::CardsController < ApplicationController
   end
 
   def staging
+    @pagy, @staged_cards = pagy(@cards)
     @locations = Inventory::Location.all
   end
 

@@ -23,9 +23,9 @@
   </div>
 
   <% if card.metadata.image_uris.length > 0 %>
-    <%= image_tag card.metadata.image_uris["normal"], class: "image" %>
+    <%= image_tag card.metadata.image_uris["normal"], loading: "lazy", class: "image" %>
   <% elsif card.metadata.front_image_uris.length > 0 %>
-    <%= image_tag card.metadata.front_image_uris["small"], class: "image" %>
+    <%= image_tag card.metadata.front_image_uris["small"], loading: "lazy",class: "image" %>
   <% else %>
     <p>No Image Found</p>
   <% end %>
