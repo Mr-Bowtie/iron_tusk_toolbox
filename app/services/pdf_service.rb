@@ -2,30 +2,36 @@ class PdfService < ApplicationService
   # TODO: handle pulling different inventory types
   def self.generate_pull_sheet
     pull_items = PullItem.joins(:inventory_location).all.order(Arel.sql("inventory_locations.label ASC, pull_items.data->>'name' ASC"))
+    pull_by_loc = pull_items.each_with_object({}) do |item, memo|
+      if memo["#{item.inventory_location.label}"].nil?
+        memo["#{item.inventory_location.label}"] = [ item ]
+      else
+        memo["#{item.inventory_location.label}"] << item
+      end
+    end
     pull_errors = PullError.all
     Prawn::Document.new.tap do |pdf|
       pdf.text "Pull Sheet", size: 24, style: :bold, align: :center
       pdf.move_down 20
 
-      if pull_items.any?
-        pdf.text "Picked Cards", size: 18, style: :bold
-        pdf.move_down 10
+      if pull_by_loc.any?
+        pull_by_loc.each do |loc, items|
+          pdf.text "#{loc}", size: 18, align: :left
+          data = [ [ "Quantity", "Name", "Number", "Set", "Foil", "Condition" ] ] +
+                items.map do |card|
+                  [
+                    card.quantity,
+                    card.data["name"],
+                    card.data["number"],
+                    card.data["set_code"].upcase,
+                    card.data["foil"] ? "FOIL" : "Normal",
+                    card.data["condition"]
+                  ]
+                end
 
-        data = [ [ "Location", "Quantity", "Name", "Condition", "Foil", "Set", "Number" ] ] +
-              pull_items.map do |card|
-                [
-                  card.inventory_location.label,
-                  card.quantity,
-                  card.data["name"],
-                  card.data["condition"],
-                  card.data["foil"] ? "Yes" : "No",
-                  card.data["set_code"],
-                  card.data["number"]
-                ]
-              end
-
-        pdf.table(data, header: true, row_colors: [ "F0F0F0", "FFFFFF" ], width: pdf.bounds.width)
-        pdf.move_down 20
+          pdf.table(data, cell_style: { size: 8 }, column_widths: { 1 => 200 }, header: true, row_colors: [ "F0F0F0", "FFFFFF" ], width: pdf.bounds.width)
+          pdf.move_down 20
+        end
       else
         pdf.text "No cards found.", size: 12, style: :italic
         pdf.move_down 20
