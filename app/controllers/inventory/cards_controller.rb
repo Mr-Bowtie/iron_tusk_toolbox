@@ -136,7 +136,7 @@ class Inventory::CardsController < ApplicationController
     @inventory_card.destroy!
 
     respond_to do |format|
-      format.html { redirect_to inventory_cards_path, status: :see_other, notice: "Card was successfully destroyed." }
+      format.html { redirect_to inventory_path, status: :see_other, notice: "Card was successfully destroyed." }
       format.json { head :no_content }
     end
   end
