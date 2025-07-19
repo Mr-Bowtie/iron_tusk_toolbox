@@ -18,6 +18,30 @@
   </head>
 
   <body class="container">
+    <nav class="navbar" data-controller="navbar">
+      <div class="navbar-brand">
+      <%= link_to inventory_path, class: "navbar-item" do %>
+        <%= image_tag "iron_tusk_logo_temp.png", size: "100", style: "max-height: unset;" %>
+      <% end %> 
+      <a class="navbar-burger" role="button" aria-label="menu" aria-expanded="false" data-action="click->navbar#toggleMenu">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+      </div>
+      <div class="navbar-menu">
+        <%= link_to "Staging", inventory_cards_staging_path, class: "navbar-item" %>
+        <div class="navbar-item has-dropdown" data-action="click->navbar#toggleDropdown">
+          <a class="navbar-link">Admin</a>
+
+          <div class="navbar-dropdown">
+            <%= link_to "Scryfall", admin_scryfall_path, class: "navbar-item" %>
+            <%= link_to "Background Jobs", admin_good_job_path, class: "navbar-item" %>
+          </div>
+        </div>
+      </div>
+    </nav>
     <div class="has-text-centered my-6">
       <p class="has-text-primary"><%= notice %></p>
       <p class="has-text-danger"><%= alert %></p>

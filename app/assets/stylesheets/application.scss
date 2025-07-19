@@ -40,6 +40,7 @@
 @import "bulma/sass/utilities/initial-variables";
 @import "bulma/sass/utilities/functions";
 @import "bulma/sass/utilities/derived-variables";
+@import "bulma/sass/utilities/mixins";
 @import "choices.js/src/styles/choices";
 
 .choices__inner {
@@ -58,4 +59,50 @@
 
 .full-width {
   width: 100%;
+}
+
+.convert-inventory-form {
+  display: flex;
+
+  @include mobile {
+    flex-direction: column;
+    align-items: center;
+
+    .field {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  @include tablet {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: end;
+  }
+}
+
+.inventory-card {
+  p, b {
+    font-size: .75rem;
+  }
+}
+
+.is-foil-card {
+  position: relative;
+  display: inline-block;    
+  border: 2px solid rgba(252, 208, 5, 1);
+}
+
+.is-foil-card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(245, 119, 244, 0.21); /* change to any RGBA you like */
+  pointer-events: none;               /* img still “clickable” if needed */
+}
+
+/* ensure the img itself fills the container */
+.is-foil-card img {
+  display: block;
+  width: 100%;
+  height: auto;
 }

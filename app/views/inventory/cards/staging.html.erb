@@ -1,47 +1,64 @@
-<div class="level">
-  <div class="is-flex is-flex-direction-column">
+<div class="is-flex is-flex-direction-column is-align-items-center mb-4">
+  <h1
+    class="title is-1 has-text-centered my-4"
+  >Staging</h1>
+
+  <div>
     <%= form_with url: inventory_cards_clear_staging_path, method: :post, data: {confirm: "Are you sure?"} do |form| %>
       <%= form.submit "Clear Staging", class: "button is-warning" %>
     <% end %>
-
-    <%= link_to "Back to dashboard", inventory_path, class: "mt-4" %>
   </div>
-
-  <h1 class=" title is-1 has-text-centered" style="position:absolute;right:40%;left:40%;">Staging</h1>
-
 </div>
 
-<%= form_with url: inventory_cards_convert_to_inventory_url, class: "mb-6 is-flex is-align-items-center is-justify-content-center" ,method: :post do |form| %>
-    <div class="field mr-6" data-controller="choices">
+<%= form_with url: inventory_cards_convert_to_inventory_url, class: "mb-6 " ,method: :post do |form| %>
+  <div class="convert-inventory-form">
+    <div class="field" data-controller="choices">
       <%= form.label "Select existing location", class: "label" %>
       <div class="control">
         <%= form.select :existing_location_id,
-          Inventory::Location.all.collect { |loc| [loc.label, loc.id] },
-          {include_blank: true},
-          class: "choice-select has-text-black"
-        %>
+                    Inventory::Location.all.collect { |loc| [loc.label, loc.id] },
+                    { include_blank: true },
+                    class: "choice-select has-text-black" %>
       </div>
     </div>
 
-    <div class="field mr-6">
+    <div class="field">
       <%= form.label "Create new location", class: "label" %>
       <div class="control">
         <%= form.text_field :new_location_label, class: "input" %>
       </div>
     </div>
 
-    <%= form.submit "Convert to inventory", class: "button is-primary level-right" %>
+    <%= form.submit "Convert to inventory", class: "button is-primary"%>
+  </div>
+
 <% end %>
 
-<div class="columns is-multiline is-flex-wrap-wrap is-align-items-baseline">
-  <% unless @cards.empty? || @cards.nil? %>
-    <% @cards.each do |card| %>
-      <div class="column is-narrow is-2">
-        <%= render card %>
-        <%= render partial: "inventory/cards/quick_view", locals: { card: card, locations: @locations } %>
+<% unless  @staged_cards.nil? || @staged_cards.empty? %>
+  <div>
+    <div class="level">
+      <div class="level-left"></div>
+      <%== pagy_bulma_nav(@pagy) %>
+      <div class="level-right">
       </div>
-    <% end %>
-  <% else %>
-    <p class="column is-size-3 has-text-centered">No Cards Staged</p>
-  <% end %>
-</div>
+    </div>
+    <div
+      class="
+        columns is-mobile is-multiline is-flex-wrap-wrap is-align-items-baseline mt-4
+      "
+    >
+      <% @staged_cards.each do |card| %>
+        <div class="column is-2-desktop is-4-touch">
+          <%= render card %>
+          <%= render partial: "inventory/cards/quick_view",
+          locals: {
+            card: card,
+            locations: @locations,
+          } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <p class="column is-size-3 has-text-centered">No Cards Staged</p>
+<% end %>
