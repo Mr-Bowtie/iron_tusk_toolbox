@@ -42,7 +42,7 @@ module Inventory
               number: row["number"]
             }
           )
-          pull_count = card_count
+          pull_count = item_count
         end
 
 

@@ -1,7 +1,7 @@
 class PdfService < ApplicationService
   # TODO: handle pulling different inventory types
   def self.generate_pull_sheet
-    pull_items = PullItem.joins(:inventory_location).all.order("inventory_locations.label ASC")
+    pull_items = PullItem.joins(:inventory_location).all.order(Arel.sql("inventory_locations.label ASC, pull_items.data->>'name' ASC"))
     pull_errors = PullError.all
     Prawn::Document.new.tap do |pdf|
       pdf.text "Pull Sheet", size: 24, style: :bold, align: :center
