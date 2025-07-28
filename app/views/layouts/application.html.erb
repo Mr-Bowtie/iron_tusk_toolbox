@@ -41,6 +41,11 @@
           </div>
         </div>
       </div>
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "button is-danger" %>
+        </div>
+      </div>
     </nav>
     <div class="has-text-centered my-6">
       <p class="has-text-primary"><%= notice %></p>

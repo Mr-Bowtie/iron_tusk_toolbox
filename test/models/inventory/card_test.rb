@@ -18,7 +18,7 @@
 #
 #  index_inventory_cards_on_card_metadatum_id                   (card_metadatum_id)
 #  index_inventory_cards_on_inventory_location_id               (inventory_location_id)
-#  index_inventory_cards_on_scryfall_id_and_foil_and_condition  (scryfall_id,foil,condition)
+#  index_inventory_cards_on_scryfall_id_and_foil_and_condition  (scryfall_id,foil,condition) UNIQUE
 #
 require "test_helper"
 
