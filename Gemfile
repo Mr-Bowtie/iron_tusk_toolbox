@@ -94,3 +94,5 @@ gem "json-streamer", "~> 2.1"
 gem "yajl-ffi", "~> 1.0"
 
 gem "activerecord-import", "~> 2.2"
+
+gem "devise", "~> 4.9"

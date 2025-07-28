@@ -21,7 +21,7 @@ services:
       # - 'vite'
     init: true
     ports:
-      - "9998:3000"
+      # - "9998:3000"
       - "9999:5000"
     volumes:
       - ./:/rails:delegated
