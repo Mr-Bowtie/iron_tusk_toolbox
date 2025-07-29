@@ -157,7 +157,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_28_130340) do
     t.boolean "staged"
     t.index ["card_metadatum_id"], name: "index_inventory_cards_on_card_metadatum_id"
     t.index ["inventory_location_id"], name: "index_inventory_cards_on_inventory_location_id"
-    t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_scryfall_id_and_foil_and_condition", unique: true
+    t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_scryfall_id_and_foil_and_condition"
   end
 
   create_table "inventory_locations", force: :cascade do |t|
