@@ -17,6 +17,11 @@ class Inventory::CardsController < ApplicationController
     redirect_to inventory_path
   end
 
+  def pull_item
+    Inventory::Card.find(params[:card_id]).pull!(amount: params[:pull_quantity].to_i)
+    redirect_back_or_to inventory_path
+  end
+
   def generate_pull_sheet
     pdf_data = PdfService.generate_pull_sheet
 

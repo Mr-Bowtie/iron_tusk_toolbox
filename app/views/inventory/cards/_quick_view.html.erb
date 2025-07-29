@@ -15,6 +15,13 @@
       <% end %>
     </div>
     <div class="is-flex is-flex-direction-column ml-4">
+      <div>
+        <%= form_with url: inventory_cards_pull_item_path do |form| %>
+          <%= form.hidden_field :card_id, value: card.id %>
+          <%= form.submit "Pull", class: "button is-warning is-medium" %>
+          <%= form.number_field :pull_quantity, min: 1, max: card.quantity, class: "input" %>
+        <% end %>
+      </div>
       <p><%= card.metadata.name %></p>
       <p><b><%= card.metadata.set_name %></b></p>
       <%= form_with model: card do |form| %>

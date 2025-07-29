@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     get "cards/generate_pull_sheet" => "cards#generate_pull_sheet"
     post "cards/mark_items_pulled" => "cards#mark_items_pulled"
     post "cards/revert_pull" => "cards#revert_pull"
+    post "cards/pull_item" => "cards#pull_item"
     
     resources :cards
   end
