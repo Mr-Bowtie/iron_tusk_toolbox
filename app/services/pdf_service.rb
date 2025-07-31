@@ -1,7 +1,20 @@
 class PdfService < ApplicationService
   # TODO: handle pulling different inventory types
   def self.generate_pull_sheet
-    pull_items = PullItem.joins(:inventory_location).all.order(Arel.sql("inventory_locations.label ASC, pull_items.data->>'name' ASC"))
+    ungrouped_pull_items = PullItem.joins(:inventory_location).all.order(Arel.sql("inventory_locations.label ASC, pull_items.data->>'name' ASC"))
+    pull_items = ungrouped_pull_items
+    .group_by { |item| [item.data, item.inventory_type, item.inventory_location_id] }
+    .map do |(data, inventory_type, inventory_location_id), items|
+      total_quantity = items.sum(&:quantity)
+
+      PullItem.new(
+        data: data,
+        inventory_type: inventory_type,
+        inventory_location_id: inventory_location_id,
+        quantity: total_quantity
+      )
+    end
+
     pull_by_loc = pull_items.each_with_object({}) do |item, memo|
       if memo["#{item.inventory_location.label}"].nil?
         memo["#{item.inventory_location.label}"] = [ item ]
