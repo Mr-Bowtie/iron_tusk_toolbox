@@ -126,6 +126,7 @@ class ScryfallSyncService < ApplicationService
       back_image_uris: back_image_uris,
       image_uris: card_data["image_uris"] || {},
       prices: card_data["prices"] || {},
+      released_at: card_data["released_at"],
       created_at: Time.current,
       updated_at: Time.current
     }

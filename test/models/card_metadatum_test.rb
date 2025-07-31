@@ -22,6 +22,7 @@
 #  prices           :jsonb
 #  produced_mana    :string           default([]), is an Array
 #  rarity           :string
+#  released_at      :date
 #  set              :string
 #  set_name         :string
 #  toughness        :string

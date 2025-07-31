@@ -36,6 +36,7 @@ class ScryfallBatchUpsertJob < ApplicationJob
       image_uris
       prices
       updated_at
+      released_at
     ]
     CardMetadatum.import card_data, on_duplicate_key_update: { conflict_target: [ :scryfall_id ], columns: update_columms }
   end

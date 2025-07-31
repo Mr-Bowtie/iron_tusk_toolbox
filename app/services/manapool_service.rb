@@ -1,4 +1,11 @@
+require "net/http"
+require "open-uri"
+require "uri"
+require "json"
+
 class ManapoolService < ApplicationService
+  API_BASE = "https://manapool.com/api/v1/seller" # update if different
+
   def create_manapool_request(url:, method: "get", params: nil)
     uri = URI(url)
     uri.query = URI.encode_www_form(params) unless params.nil? || params.empty?
@@ -18,6 +25,29 @@ class ManapoolService < ApplicationService
     [ req, uri ]
   end
 
+  def fetch_and_hydrate_orders
+    threads = []
+    orders = fetch_unfulfilled_orders
+    orders["orders"].each do |order|
+      threads << Thread.new do
+        details = fetch_order_details(order["id"])["order"]
+        order = Order.find_or_initialize_by(marketplace_id: details["id"])
+        order.update(
+          marketplace_label: details["label"],
+          total_value: details["total_cents"],
+          shipping_method: details["shipping_method"],
+          items: details["items"],
+          source: "manapool", # TODO: change when other marketplaces added
+          status: Order.map_status(details["latest_fulfillment_status"]),
+          placed_at: details["created_at"]
+
+        )
+      end
+    end
+
+    threads.each(&:join)
+  end
+
   def fetch_unfulfilled_orders
     req, uri = create_manapool_request(url: "#{API_BASE}/orders", method: "get", params: { is_unfulfilled: true })
 
@@ -30,29 +60,28 @@ class ManapoolService < ApplicationService
     JSON.parse(res.body)
   end
 
-  def extract_cards(orders)
-    cards_details = []
-
-    orders.each do |order|
-      order_details = fetch_order_details(order["id"])
-
-      order_details["order"]["items"].each do |item|
-        piece = item["product"]
-
-        card_data = piece["single"]
-        cards_details << {
-          scryfall_id: card_data["scryfall_id"],
-          card_name: card_data["name"],
-          set: card_data["set"],
-          condition: card_data["condition_id"],
-          foil: card_data["finish_id"],
-          number: card_data["number"],
-          quantity: item["quantity"]
-        }
-      end
-    end
-    combine_duplicate_cards(cards_details)
-  end
+  # def extract_cards(orders)
+  #   cards_details = []
+  #
+  #   orders.each do |order|
+  #     order_details = fetch_order_details(order["id"])
+  #
+  #     order_details["order"]["items"].each do |item|
+  #       piece = item["product"]
+  #
+  #       card_data = piece["single"]
+  #       cards_details << {
+  #         scryfall_id: card_data["scryfall_id"],
+  #         card_name: card_data["name"],
+  #         set: card_data["set"],
+  #         condition: card_data["condition_id"],
+  #         foil: card_data["finish_id"],
+  #         number: card_data["number"],
+  #         quantity: item["quantity"]
+  #       }
+  #     end
+  #   end
+  # end
 
   private
 
