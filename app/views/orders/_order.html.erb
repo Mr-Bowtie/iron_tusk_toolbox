@@ -1,5 +1,5 @@
 <div class="column is-3" id="<%= dom_id order %>">
-  <%= check_box_tag "order_ids[]", order.id, false, id: "order_#{order.id}" %>
+  <%= check_box_tag "order_ids[]", order.id, false, id: "order_#{order.id}", class: "order-checkbox", data: {"checkbox-target": "checkbox", action: "change->checkbox#checkboxChanged"} %>
   <p><b>ID:</b> <%= order.marketplace_label %></p>
   <p><b>ORDER PLACED:</b> <%= order.placed_at %></p>
   <p><b>VALUE:</b> <%= order.total_value.to_f / 100 %>

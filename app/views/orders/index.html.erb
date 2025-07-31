@@ -11,8 +11,13 @@
   </div>
 </div>
 
-<%= form_with url: orders_pull_selected_path, local: true do |form| %>
-  <%= form.submit "Pull Selected Orders", class: "button is-primary" %>
+
+<%= form_with url: orders_pull_selected_path, local: true, data: {controller: "checkbox"} do |form| %>
+  <%= form.submit "Pull Selected Orders", class: "button is-primary mt-4" %>
+  <div class="is-flex is-align-items-center my-4 ">
+  <%= label_tag "Select All", nil, class: "label mb-0 mr-2" %>
+  <%= check_box_tag "Select All", "", false, id: "select-all", data:{ "checkbox-target": "toggle", action: "click->checkbox#toggleAll"} %>
+  </div>
   <div class="columns is-multiline" id="orders">
     <% @orders.each do |order| %>
       <%= render order %>
