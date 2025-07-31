@@ -182,7 +182,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_31_204545) do
     t.string "marketplace_id"
     t.string "marketplace_label"
     t.jsonb "fulfillment_data"
-    t.date "placed_at"
+    t.datetime "placed_at"
   end
 
   create_table "pull_errors", force: :cascade do |t|
