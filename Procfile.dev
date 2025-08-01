@@ -1,3 +1,4 @@
 web: bundle exec rails server --binding=0.0.0.0
 js: yarn build --watch
 css: yarn build:css --watch
+jobs: bundle exec good_job start
