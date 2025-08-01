@@ -13,12 +13,12 @@ class OrdersController < ApplicationController
   end
 
   def grab_unfilled_manapool_orders
-    ManapoolService.new.fetch_and_hydrate_orders
+    Manapool::FetchOrdersService.call
     redirect_to orders_path
   end
 
   def grab_all_manapool_orders
-    ManapoolService.new.fetch_and_hydrate_orders(unfulfilled: false)
+    Manapool::FetchOrdersService.call(unfulfilled: false)
     redirect_to orders_path
   end 
 
