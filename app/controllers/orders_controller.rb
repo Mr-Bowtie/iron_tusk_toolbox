@@ -12,10 +12,15 @@ class OrdersController < ApplicationController
     redirect_to inventory_path
   end
 
-  def sync_manapool_orders
+  def grab_unfilled_manapool_orders
     ManapoolService.new.fetch_and_hydrate_orders
     redirect_to orders_path
   end
+
+  def grab_all_manapool_orders
+    ManapoolService.new.fetch_and_hydrate_orders(unfulfilled: false)
+    redirect_to orders_path
+  end 
 
   # GET /orders or /orders.json
   def index
