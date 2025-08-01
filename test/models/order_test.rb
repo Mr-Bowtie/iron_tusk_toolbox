@@ -3,6 +3,7 @@
 # Table name: orders
 #
 #  id                :bigint           not null, primary key
+#  address_data      :jsonb
 #  fees              :integer
 #  fulfillment_data  :jsonb
 #  items             :jsonb

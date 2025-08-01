@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_31_204545) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_01_213414) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -183,6 +183,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_31_204545) do
     t.string "marketplace_label"
     t.jsonb "fulfillment_data"
     t.datetime "placed_at"
+    t.jsonb "address_data"
   end
 
   create_table "pull_errors", force: :cascade do |t|
