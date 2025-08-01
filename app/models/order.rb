@@ -84,11 +84,8 @@ class Order < ApplicationRecord
       "pulling"
     when "shipped"
       "shipped"
-    when "null"
+    when nil
       "unfulfilled"
     end
-  end
-
-  def update_and_sync_status(status)
   end
 end
