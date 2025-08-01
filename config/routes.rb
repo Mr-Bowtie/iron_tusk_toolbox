@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   resources :orders
   post "orders/pull_selected" => "orders#pull_selected_orders"
-  post "orders/sync_manapool" => "orders#sync_manapool_orders"
+  post "orders/grab_manapool_unfilled" => "orders#grab_unfilled_manapool_orders"
+  post "orders/grab_manapool_all" => "orders#grab_all_manapool_orders"
 
   devise_for :users
   resources :inventory_locations

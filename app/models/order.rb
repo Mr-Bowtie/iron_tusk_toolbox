@@ -81,6 +81,10 @@ class Order < ApplicationRecord
     case status
     when "processing"
       "pulling"
+    when "shipped"
+      "shipped"
+    when "null"
+      "unfulfilled"
     end
   end
 

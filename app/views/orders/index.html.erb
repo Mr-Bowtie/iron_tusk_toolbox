@@ -7,7 +7,8 @@
     <h1 class="title is-1">Orders</h1>
   </div>
   <div class="level-right">
-   <%= button_to "Grab Manapool Orders", orders_sync_manapool_path, class: "button is-link" %> 
+   <%= button_to "Grab unfilled Manapool Orders", orders_grab_manapool_unfilled_path, class: "button is-link mr-4" %> 
+   <%= button_to "Grab all Manapool Orders", orders_grab_manapool_all_path, class: "button is-warning" %> 
   </div>
 </div>
 
