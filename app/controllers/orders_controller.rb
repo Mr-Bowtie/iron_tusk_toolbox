@@ -7,6 +7,7 @@ class OrdersController < ApplicationController
 
     orders.each do |order|
       order.pull_items
+      order.update(status: "pulling")
     end
 
     redirect_to inventory_path
@@ -20,11 +21,15 @@ class OrdersController < ApplicationController
   def grab_all_manapool_orders
     Manapool::FetchOrdersService.call(unfulfilled: false)
     redirect_to orders_path
-  end 
+  end
 
   # GET /orders or /orders.json
   def index
-    @orders = Order.all.order(placed_at: :desc)
+    if params[:hide_shipped_orders] == "1"
+      @orders = Order.where.not(status: "shipped")
+    else
+      @orders = Order.all.order(placed_at: :desc)
+    end
   end
 
   # GET /orders/1 or /orders/1.json
