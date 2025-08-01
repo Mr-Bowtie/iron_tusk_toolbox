@@ -50,7 +50,7 @@ module ManapoolClient
   end
 
   def self.fetch_order_details(order_id)
-    req, uri = create_manapool_request(url: "#{API_BASE}/orders/#{order_id}")
+    req, uri = create_request(url: "#{API_BASE}/orders/#{order_id}")
 
       res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
         http.request(req)

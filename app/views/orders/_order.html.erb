@@ -1,8 +1,12 @@
-<div class="column is-3" id="<%= dom_id order %>">
+<div class="<%= order.status == 'shipped' ? 'shipped-order' : '' %> column is-3 " id="<%= dom_id order %>">
   <%= check_box_tag "order_ids[]", order.id, false, id: "order_#{order.id}", class: "order-checkbox", data: {"checkbox-target": "checkbox", action: "change->checkbox#checkboxChanged"} %>
-  <p><b>ID:</b> <%= order.marketplace_label %></p>
-  <p><b>ORDER PLACED:</b> <%= order.placed_at %></p>
-  <p><b>VALUE:</b> <%= order.total_value.to_f / 100 %>
-<p><b>SHIPPING METHOD:</b> <%= order.shipping_method %></p>
-<p><b>STATUS:</b> <%= order.status %></p> 
+  <p class="has-text-weight-bold has-text-warning"><%= order.address_data&.[]('name') %></p>
+  <p><%= order.marketplace_label %></p>
+
+  <p><%= order.placed_at&.in_time_zone("America/New_York")&.strftime("%y-%m-%d %I:%M %p") %></p>
+  <p class="has-text-primary">$<%= order.total_value.to_f / 100 %>
+  <p class="<%= order.shipping_method == "ground_advantage" ? 'has-text-danger has-text-weight-bold' : '' %>" >
+    <%= order.shipping_method %>
+  </p>
+  <p><%= order.status %></p> 
 </div>
