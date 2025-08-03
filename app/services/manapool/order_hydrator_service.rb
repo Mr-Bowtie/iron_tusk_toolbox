@@ -1,15 +1,8 @@
-require "net/http"
-require "open-uri"
-require "uri"
-require "json"
-require "pry"
-
 module Manapool
   class OrderHydratorService < ApplicationService
     def self.call(order_id)
       details = ManapoolClient.fetch_order_details(order_id)["order"]
       order = Order.find_or_initialize_by(marketplace_id: details["id"])
-      binding.pry
       order.update(
         marketplace_label: details["label"],
         total_value: details["total_cents"],
