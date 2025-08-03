@@ -1,8 +1,6 @@
 class CardMetadataController < ApplicationController
   before_action :set_card_metadatum, only: %i[ show edit update destroy ]
 
-  def searc
-
   # GET /card_metadata or /card_metadata.json
   def index
     @card_metadata = CardMetadatum.all
