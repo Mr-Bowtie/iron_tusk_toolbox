@@ -26,7 +26,7 @@ class OrdersController < ApplicationController
   # GET /orders or /orders.json
   def index
     if params[:hide_shipped_orders] == "1"
-      @orders = Order.where.not(status: "shipped")
+      @orders = Order.where.not(status: "shipped").order(placed_at: :desc)
     else
       @orders = Order.all.order(placed_at: :desc)
     end
