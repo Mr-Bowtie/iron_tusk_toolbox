@@ -18,8 +18,16 @@
       <div>
         <%= form_with url: inventory_cards_pull_item_path do |form| %>
           <%= form.hidden_field :card_id, value: card.id %>
-          <%= form.submit "Pull", class: "button is-warning is-medium" %>
-          <%= form.number_field :pull_quantity, min: 1, max: card.quantity, class: "input" %>
+          <%= form.number_field :pull_quantity,
+                            value: 1,
+                            min: 1,
+                            max: card.quantity,
+                            class: "input" %>
+          <%= form.submit "Pull",
+                      class: "button is-warning is-medium",
+                      data: {
+                        action: "click->quick-view#unClip",
+                      } %>
         <% end %>
       </div>
       <p><%= card.metadata.name %></p>
@@ -57,12 +65,21 @@
         <% end %>
 
         <div class="mt-4">
-          <%= form.submit "Save", class: "button is-large is-primary", data: { action: "click->quick-view#unClip"} %>
+          <%= form.submit "Save",
+                      class: "button is-large is-primary",
+                      data: {
+                        action: "click->quick-view#unClip",
+                      } %>
         </div>
       <% end %>
 
       <%= form_with url: inventory_card_path(card), method: :delete, class: "mt-6"  do |form| %>
-        <%= form.submit "Delete", class: "button is-large is-outlined is-danger", data: { action: "click->quick-view#unClip", turbo_confirm: "Are you sure you want to delete this card?"} %>
+        <%= form.submit "Delete",
+                    class: "button is-large is-outlined is-danger",
+                    data: {
+                      action: "click->quick-view#unClip",
+                      turbo_confirm: "Are you sure you want to delete this card?",
+                    } %>
       <% end %>
     </div>
 
