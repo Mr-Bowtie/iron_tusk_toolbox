@@ -1,22 +1,18 @@
-<div id="<%= dom_id card_metadatum %>">
-  <p>
-    <strong>Scryfall:</strong>
-    <%= card_metadatum.scryfall_id %>
-  </p>
+<div
+  data-controller="quick-view"
+  data-action="click->quick-view#showCardModal"
+  id="<%= dom_id card_data %>"
+>
+  <% if card_data.image_uris.length > 0 %>
+    <%= image_tag card_data.image_uris["normal"], loading: "lazy" %>
+  <% elsif card_data.front_image_uris.length > 0 %>
+    <%= image_tag card_data.front_image_uris["small"], loading: "lazy" %>
+  <% else %>
+    <p>No Image Found</p>
+  <% end %>
 
-  <p>
-    <strong>Tcgplayer:</strong>
-    <%= card_metadatum.tcgplayer_id %>
-  </p>
-
-  <p>
-    <strong>Name:</strong>
-    <%= card_metadatum.name %>
-  </p>
-
-  <p>
-    <strong>Mana cost:</strong>
-    <%= card_metadatum.mana_cost %>
-  </p>
+  <p class="has-text-centered"><b><%= card_data.name %></b></p>
+  <p class="has-text-centered"><%= card_data.set.upcase %>
+    #<%= card_data.collector_number %></p>
 
 </div>

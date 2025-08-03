@@ -7,6 +7,24 @@ class Inventory::CardsController < ApplicationController
   def index
   end
 
+  def add_items
+    search_results = CardMetadataSearch.new(search_params).results
+
+    unless search_results.nil?
+      @pagy, @metadata_results = pagy(search_results)
+    end
+  end
+
+  def stage_item
+    card = Inventory::Card.build(stage_item_params)
+    if card.save
+      redirect_back_or_to inventory_cards_add_items_path
+      flash[:success] = "card staged successfully"
+    else
+      flash[:alert] = "Staging card failed"
+    end
+  end
+
   def pull_inventory
     if PullItem.any?
       flash.now[:alert] = "Process items ready to pull before adding more"
@@ -159,5 +177,25 @@ class Inventory::CardsController < ApplicationController
 
     def set_staged_cards
       @cards = Inventory::Card.joins(:metadata).where(staged: true).order("card_metadata.name ASC")
+    end
+
+
+    def search_params
+      params.fetch(:search, {}).permit(
+        :name,
+        :set,
+        :collector_number
+      )
+      
+    end
+
+    def stage_item_params
+      params.fetch(:stage_item, {}).permit(
+        :card_metadatum_id,
+        :quantity,
+        :foil,
+        :condition,
+        :staged
+      )
     end
 end

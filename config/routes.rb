@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     post "cards/mark_items_pulled" => "cards#mark_items_pulled"
     post "cards/revert_pull" => "cards#revert_pull"
     post "cards/pull_item" => "cards#pull_item"
+    get "cards/add_items" => "cards#add_items"
+    post "cards/stage_item" => "cards#stage_item"
     
     resources :cards
   end

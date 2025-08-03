@@ -31,6 +31,7 @@
       </a>
       </div>
       <div class="navbar-menu">
+        <%= link_to "Add Items", inventory_cards_add_items_path, class: "navbar-item" %>
         <%= link_to "Staging", inventory_cards_staging_path, class: "navbar-item" %>
         <div class="navbar-item has-dropdown" data-action="click->navbar#toggleDropdown">
           <a class="navbar-link">Admin</a>

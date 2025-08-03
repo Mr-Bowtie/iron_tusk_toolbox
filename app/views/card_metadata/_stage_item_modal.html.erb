@@ -1,0 +1,53 @@
+<div
+  class="modal card-quick-view"
+  data-card-quick-view-id="<%= card_data.id %>"
+  data-controller="quick-view"
+>
+  <div class="modal-background" data-action="click->quick-view#close"></div>
+  <div class="modal-content is-flex is-align-items-center" style="width: 60%;">
+    <div>
+      <% if card_data.image_uris.length > 0 %>
+        <%= image_tag card_data.image_uris["png"], class: "image" %>
+      <% elsif card_data.front_image_uris.length > 0 %>
+        <%= image_tag card_data.front_image_uris["small"], class: "image" %>
+      <% else %>
+        <p>No Image Found</p>
+      <% end %>
+    </div>
+    <div class="is-flex is-flex-direction-column ml-4">
+      <p><%= card_data.name %></p>
+      <p><b><%= card_data.set_name %></b></p>
+      <%= form_with url: inventory_cards_stage_item_path, scope: :stage_item do |form| %>
+        <%= form.hidden_field :card_metadatum_id, value: card_data.id %>
+        <%= form.hidden_field :staged, value: true %>
+
+        <div class="field level">
+          <%= form.label :quantity, class: "label" %>
+          <div class="control">
+            <%= form.number_field :quantity, value: 1, min: 1, class: "input" %>
+          </div>
+        </div>
+
+        <div class="field is-flex is-align-items-flex-start">
+          <%= form.label :foil, class: "label mr-2" %>
+          <div class="control">
+            <%= form.select :foil, [["Normal", false], ["Foil", true]] %>
+          </div>
+        </div>
+        <div class="field" data-controller="choices">
+          <%= form.label :condition, class: "label" %>
+          <div class="control">
+            <%= form.select :condition,
+                        Inventory::Card.conditions.map { |c, i| [c.titleize, c] } %>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= form.submit "Add to staging", class: "button is-large is-primary", data: { action: "click->quick-view#unClip"} %>
+        </div>
+      <% end %>
+
+    </div>
+
+  </div>
+</div>

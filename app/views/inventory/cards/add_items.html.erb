@@ -1,0 +1,51 @@
+<div class="container">
+  <h1 class="title is-1">Add Items</h1>
+
+  <% if flash[:alert] %>
+    <p class="has-text-centered has-text-danger"><%= flash[:alert] %></p>
+  <% elsif flash[:success] %>
+    <p class="has-text-centered has-text-primary"><%= flash[:success] %></p>
+  <% end %>
+
+  <%= form_with url: inventory_cards_add_items_path, method: :get, scope: :search, local: true do |f| %>
+    <div class="field">
+      <%= f.label :name, "Name", class: "label" %>
+      <div class="control">
+        <%= f.text_field :name, value: params.dig(:search, :name), class: "input" %>
+      </div>
+    </div>
+
+    <div class="level">
+      <div class="field full-width">
+        <%= f.label :set, "Set Code", class: "label" %>
+        <div class="control">
+          <%= f.text_field :set, value: params.dig(:search, :set), class: "input" %>
+        </div>
+      </div>
+
+      <div class="field full-width">
+        <%= f.label :collector_number, "Collector Number", class: "label" %>
+        <div class="control">
+          <%= f.text_field :collector_number, value: params.dig(:search, :collector_number), class: "input" %>
+        </div>
+      </div>
+    </div>
+    <%= f.submit "Search", class: "button is-primary is-outlined" %>
+
+  <% end %>
+  
+  <% unless @metadata_results.nil? || @metadata_results.length == 0 %>
+    <div>
+      <%== pagy_bulma_nav(@pagy) %>
+      <div class="columns is-multiline">
+        <% @metadata_results.each do |card_data| %>
+          <div class="column is-narrow is-2">
+            <%= render partial: "card_metadata/card_metadatum", locals: {card_data: card_data} %>
+            <%= render partial: "card_metadata/stage_item_modal", locals: {card_data: card_data} %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end  %>
+
+</div>
