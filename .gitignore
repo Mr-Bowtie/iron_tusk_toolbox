@@ -41,3 +41,4 @@
 /vendor
 tags
 vendor
+!/app/javascript/vendor

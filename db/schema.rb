@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_28_130340) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_01_213414) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_28_130340) do
     t.datetime "updated_at", null: false
     t.jsonb "front_image_uris", default: {}
     t.jsonb "back_image_uris", default: {}
+    t.date "released_at"
     t.index ["scryfall_id"], name: "index_card_metadata_on_scryfall_id", unique: true
   end
 
@@ -165,6 +166,24 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_28_130340) do
     t.string "label"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "source"
+    t.integer "status"
+    t.jsonb "items"
+    t.integer "total_value"
+    t.integer "fees"
+    t.integer "shipping_paid"
+    t.integer "net_earned"
+    t.string "shipping_method"
+    t.string "marketplace_id"
+    t.string "marketplace_label"
+    t.jsonb "fulfillment_data"
+    t.datetime "placed_at"
+    t.jsonb "address_data"
   end
 
   create_table "pull_errors", force: :cascade do |t|

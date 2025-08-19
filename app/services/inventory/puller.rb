@@ -9,7 +9,7 @@ module Inventory
       raise ArgumentError, "Unsupported format: #{format}" unless finding_class
 
       CsvParser.parse(file_path).each do |row|
-        items = finding_class.find(row)
+        items = finding_class.find_from_csv(row)
         item_count = items.sum(&:quantity)
         pull_count = row["quantity"].to_i
 
@@ -58,6 +58,10 @@ module Inventory
           end
         end
       end
+    end
+    
+    def self.process_mp_orders
+
     end
   end
 end

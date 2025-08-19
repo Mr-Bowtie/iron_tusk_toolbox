@@ -1,0 +1,85 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Orders" %>
+
+<div class="level">
+  <div class="level-left">
+    <h1 class="title is-1">Orders</h1>
+  </div>
+  <div class="level-right">
+    <%= button_to "Grab unfilled Manapool Orders",
+    orders_grab_manapool_unfilled_path,
+    class: "button is-link mr-4" %>
+    <%= button_to "Grab all Manapool Orders",
+    orders_grab_manapool_all_path,
+    class: "button is-warning" %>
+  </div>
+</div>
+
+<h2 class="subtitle is-2">Filters</h2>
+<%= form_with url: orders_path, local: true, method: :get, scope: :order, data: {controller: "choices"} do |form| %>
+  <div class="level">
+    <div class="field full-width">
+      <%= form.label :status, class: "label" %>
+      <div class="control">
+        <%= form.select :status,
+                    options_for_select(Order.statuses, params.dig(:order, :status)),
+                    multiple: true,
+                    class: "input" %>
+      </div>
+    </div>
+
+    <div class="field full-width">
+      <%= form.label "Start Date", class: "label" %>
+      <div class="control">
+        <%= form.date_field :placed_at_start,
+                        value: params.dig(:order, :placed_at_start),
+                        class: "input" %>
+      </div>
+    </div>
+
+    <div class="field full-width">
+      <%= form.label "End Date", class: "label" %>
+      <div class="control">
+        <%= form.date_field :placed_at_end,
+                        value: params.dig(:order, :placed_at_end),
+                        class: "input" %>
+      </div>
+    </div>
+  </div>
+
+  <%= form.submit "Filter orders", class: "button mt-4" %>
+
+<% end %>
+
+<%= form_with url: orders_pull_selected_path, local: true, data: {controller: "checkbox pagy-initializer"} do |form| %>
+
+  <div class="is-flex is-flex-direction-column is-align-items-center">
+    <div class="is-flex is-align-items-center">
+      <%= label_tag "Select All", nil, class: "label mb-0 mr-2" %>
+      <%= check_box_tag "Select All",
+      "",
+      false,
+      id: "select-all",
+      data: {
+        "checkbox-target": "toggle",
+        action: "click->checkbox#toggleAll",
+      } %>
+    </div>
+
+    <%= form.submit "Pull Selected Orders", class: "button is-primary my-2 mr-4" %>
+    <p class="has-text-warning my-3"><b>Total Orders:</b> <%= @pagy.count %></p>
+    <%== pagy_bulma_nav(@pagy) %>
+  </div>
+
+  <div class="my-2 is-flex is-justify-content-flex-end">
+    <%== pagy_limit_selector_js(@pagy) %>
+  </div>
+
+  <div class="columns is-multiline mt-4" id="orders">
+    <% @orders.each do |order| %>
+      <%= render order %>
+    <% end %>
+  </div>
+
+<% end %>
