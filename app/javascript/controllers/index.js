@@ -16,5 +16,8 @@ application.register("hello", HelloController)
 import NavbarController from "./navbar_controller"
 application.register("navbar", NavbarController)
 
+import PagyInitializerController from "./pagy_initializer_controller"
+application.register("pagy-initializer", PagyInitializerController)
+
 import QuickViewController from "./quick_view_controller"
 application.register("quick-view", QuickViewController)

@@ -143,7 +143,7 @@ require 'pagy/extras/bulma'
 
 # Limit extra: Allow the client to request a custom limit per page with an optional selector UI
 # See https://ddnexus.github.io/pagy/docs/extras/limit
-# require 'pagy/extras/limit'
+require 'pagy/extras/limit'
 # set to false only if you want to make :limit_extra an opt-in variable
 # Pagy::DEFAULT[:limit_extra] = false    # default true
 # Pagy::DEFAULT[:limit_param] = :limit   # default
@@ -178,7 +178,7 @@ require 'pagy/extras/bulma'
 
 # With the asset pipeline
 # Sprockets need to look into the pagy javascripts dir, so add it to the assets paths
-# Rails.application.config.assets.paths << Pagy.root.join('javascripts')
+Rails.application.config.assets.paths << Pagy.root.join('javascripts')
 
 # I18n
 
