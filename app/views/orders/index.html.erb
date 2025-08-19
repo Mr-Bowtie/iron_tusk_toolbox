@@ -25,7 +25,7 @@
   </div>
 <% end %>
 
-<%= form_with url: orders_pull_selected_path, local: true, data: {controller: "checkbox"} do |form| %>
+<%= form_with url: orders_pull_selected_path, local: true, data: {controller: "checkbox pagy-initializer"} do |form| %>
   <%= form.submit "Pull Selected Orders", class: "button is-primary mt-4" %>
   <div class="is-flex is-align-items-center my-4 ">
     <%= label_tag "Select All", nil, class: "label mb-0 mr-2" %>
@@ -38,7 +38,9 @@
       action: "click->checkbox#toggleAll",
     } %>
   </div>
-  <div class="columns is-multiline" id="orders">
+  <%== pagy_limit_selector_js(@pagy) %>
+  <%== pagy_bulma_nav(@pagy) %>
+  <div class="columns is-multiline mt-4" id="orders">
     <% @orders.each do |order| %>
       <%= render order %>
     <% end %>

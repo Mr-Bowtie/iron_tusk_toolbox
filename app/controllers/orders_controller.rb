@@ -1,4 +1,5 @@
 class OrdersController < ApplicationController
+  include Pagy::Backend
   before_action :set_order, only: %i[ show edit update destroy ]
 
   def pull_selected_orders
@@ -26,9 +27,9 @@ class OrdersController < ApplicationController
   # GET /orders or /orders.json
   def index
     if params[:hide_shipped_orders] == "1"
-      @orders = Order.where.not(status: "shipped").order(placed_at: :desc)
+      @pagy, @orders = pagy(Order.where.not(status: "shipped").order(placed_at: :desc))
     else
-      @orders = Order.all.order(placed_at: :desc)
+      @pagy, @orders = pagy(Order.all.order(placed_at: :desc))
     end
   end
 
