@@ -20,13 +20,27 @@ class OrdersController < ApplicationController
   end
 
   def grab_all_manapool_orders
-    Manapool::FetchOrdersService.call(unfulfilled: false)
+    Manapool::FetchOrdersService.call(fulfilled: false)
     redirect_to orders_path
   end
 
   # GET /orders or /orders.json
   def index
+    if order_params[:order].nil?
       @pagy, @orders = pagy(Order.all.order(placed_at: :desc))
+    else
+      statuses = order_params[:order][:status].reject(&:empty?).empty? ? Order.statuses.values : order_params[:order][:status].reject(&:empty?)
+
+      start_date = order_params[:order][:placed_at_start].empty? ? Time.at(0) : DateTime.parse(order_params[:order][:placed_at_start])
+      end_date = order_params[:order][:placed_at_end].empty? ? Time.zone.now : DateTime.parse(order_params[:order][:placed_at_end]).end_of_day
+
+      @pagy, @orders = pagy(
+        Order.where(
+          status: statuses,
+          placed_at: start_date..end_date
+        ).order(placed_at: :desc)
+      )
+    end
   end
 
   # GET /orders/1 or /orders/1.json
@@ -88,6 +102,12 @@ class OrdersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def order_params
-      params.fetch(:order, {})
+      params.permit(
+        order: [
+          :placed_at_start,
+          :placed_at_end,
+          status: []
+        ]
+      )
     end
 end
