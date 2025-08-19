@@ -26,11 +26,7 @@ class OrdersController < ApplicationController
 
   # GET /orders or /orders.json
   def index
-    if params[:hide_shipped_orders] == "1"
-      @pagy, @orders = pagy(Order.where.not(status: "shipped").order(placed_at: :desc))
-    else
       @pagy, @orders = pagy(Order.all.order(placed_at: :desc))
-    end
   end
 
   # GET /orders/1 or /orders/1.json

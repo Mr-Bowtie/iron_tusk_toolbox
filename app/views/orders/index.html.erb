@@ -18,9 +18,7 @@
 
 <%= form_with url: orders_path, local: true, method: :get do |form| %>
   <div class="field">
-    <%= form.label "Hide Shipped orders", class: "label" %>
     <div class="control">
-      <%= check_box_tag :hide_shipped_orders, "1", params[:hide_shipped_orders] == '1', onchange: 'this.form.requestSubmit()', class: "checkbox" %>
     </div>
   </div>
 <% end %>
