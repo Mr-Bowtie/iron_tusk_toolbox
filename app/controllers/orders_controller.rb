@@ -15,12 +15,12 @@ class OrdersController < ApplicationController
   end
 
   def grab_unfilled_manapool_orders
-    Manapool::FetchOrdersService.call
+    Manapool::FetchOrdersService.call(fulfilled: false)
     redirect_to orders_path
   end
 
   def grab_all_manapool_orders
-    Manapool::FetchOrdersService.call(fulfilled: false)
+    Manapool::FetchOrdersService.call(fulfilled: "all")
     redirect_to orders_path
   end
 
