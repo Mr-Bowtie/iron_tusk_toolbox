@@ -26,11 +26,7 @@ class Inventory::CardsController < ApplicationController
   end
 
   def pull_inventory
-    if PullItem.any?
-      flash.now[:alert] = "Process items ready to pull before adding more"
-    else
-      Inventory::Puller.process(file_path: params[:csv].path, format: params[:format])
-    end
+    Inventory::Puller.process(file_path: params[:csv].path, format: params[:format])
 
     redirect_to inventory_path
   end

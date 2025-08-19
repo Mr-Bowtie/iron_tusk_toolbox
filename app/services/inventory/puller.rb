@@ -1,7 +1,8 @@
 module Inventory
   class Puller
     SUPPORTED_FORMATS = {
-      "manapool_csv" => InventoryFinder::Manapool
+      "manapool_csv" => InventoryFinder::Manapool,
+      "tcgplayer_pull_sheet" => InventoryFinder::Tcgplayer
     }.freeze
 
     def self.process(file_path:, format:)
@@ -9,21 +10,52 @@ module Inventory
       raise ArgumentError, "Unsupported format: #{format}" unless finding_class
 
       CsvParser.parse(file_path).each do |row|
+        # TODO: extract this somehow
+        card_name = nil
+        condition = nil
+        foil = nil
+        quantity = nil
+        set_code = nil
+        set_name = nil
+        number = nil
+        tcgplayer = false
+
+        case format
+        when "manapool_csv"
+          card_name = row["card_name"]
+          condition = row["condition"]
+          foil = row["foil"]
+          quantity = row["quantity"]
+          set_code = row["set_code"]
+          number = row["number"]
+        when "tcgplayer_pull_sheet"
+          next if row["Product Line"] == "Orders Contained in Pull Sheet:"
+          card_name = row["Product Name"].sub(/\s*\(.*?\)\s*$/, "")
+          condition = row["Condition"].sub(/\s*Foil$/, "")
+          foil = row["Condition"].include?("Foil")
+          quantity = row["Quantity"]
+          set_name =  row["Set"]
+          number = row["Number"]
+          tcgplayer = true
+        else
+        end
+
         items = finding_class.find_from_csv(row)
         item_count = items.sum(&:quantity)
-        pull_count = row["quantity"].to_i
+        pull_count = quantity.to_i
 
         if items.empty? || item_count == 0
            PullError.create!(
             message: "no Item found in inventory",
             item_type: "card",
             data: {
-              name: row["card_name"],
-              condition: row["condition"],
-              foil: row["foil"],
-              quantity: row["quantity"],
-              set_code: row["set"],
-              number: row["number"]
+              name: card_name,
+              condition: condition,
+              foil: foil,
+              quantity: quantity,
+              set_code: set_code || set_name,
+              number: number,
+              tcgplayer: tcgplayer
             }
           )
           next
@@ -34,12 +66,13 @@ module Inventory
             message: "Insufficient inventory quantity. Requested: #{row['quantity']}, Found: #{pull_count}",
             item_type: "card",
             data: {
-              name: row["card_name"],
-              condition: row["condition"],
-              foil: row["foil"],
-              quantity: row["quantity"],
-              set_code: row["set"],
-              number: row["number"]
+              name: card_name,
+              condition: condition,
+              foil: foil,
+              quantity: quantity,
+              set_code: set_code || set_name,
+              number: number,
+              tcgplayer: tcgplayer
             }
           )
           pull_count = item_count
@@ -59,9 +92,8 @@ module Inventory
         end
       end
     end
-    
-    def self.process_mp_orders
 
+    def self.process_mp_orders
     end
   end
 end

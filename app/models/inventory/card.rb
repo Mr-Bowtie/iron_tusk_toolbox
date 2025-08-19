@@ -50,7 +50,8 @@ class Inventory::Card < ApplicationRecord
           scryfall_id: self.scryfall_id,
           foil: self.foil,
           condition: self.condition,
-          card_metadatum_id: self.card_metadatum_id
+          card_metadatum_id: self.card_metadatum_id,
+          tcgplayer: self.tcgplayer
           }
       )
     end

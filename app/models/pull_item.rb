@@ -43,7 +43,8 @@ class PullItem < ApplicationRecord
       scryfall_id: data["scryfall_id"],
       foil: data["foil"],
       condition: data["condition"],
-      inventory_location_id: inventory_location_id
+      inventory_location_id: inventory_location_id,
+      tcgplayer: data["tcgplayer"]
     )
 
     inv_card.card_metadatum_id ||= data['card_metadatum_id']

@@ -17,7 +17,7 @@ class PullError < ApplicationRecord
   def data_string
     case item_type
     when "card"
-      "#{data["name"]} #{data["set_code"]} #{data["number"]} #{data["condition"]} #{data["foil"]}"
+      "#{data["name"]} #{data["set_code"]} #{data["number"]} #{data["condition"]} #{data["foil"]} #{data["tcgplayer"] ? 'tcgplayer' : ''}"
     end
   end
 end 
