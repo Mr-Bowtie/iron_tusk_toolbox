@@ -80,6 +80,7 @@ class Inventory::CardsController < ApplicationController
     redirect_to inventory_path
   end
 
+  #TODO: add strong params
   def convert_to_inventory
     location = nil
     if params[:new_location_label].length > 0
@@ -92,7 +93,7 @@ class Inventory::CardsController < ApplicationController
     end
 
     unless location.nil? || !location.valid?
-      @cards.update_all staged: false, inventory_location_id: location.id
+      @cards.update_all staged: false, inventory_location_id: location.id, tcgplayer: params[:tcgplayer]
       redirect_to inventory_path, notice: "Staging successfully converted to live inventory"
     else
       flash.now[:alert] = "Select an existing inventory location or enter a new location label"
@@ -172,7 +173,7 @@ class Inventory::CardsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def inventory_card_params
-      params.require(:inventory_card).permit(:quantity, :foil, :condition, :inventory_location_id)
+      params.require(:inventory_card).permit(:quantity, :foil, :condition, :inventory_location_id, :tcgplayer)
     end
 
     def set_staged_cards

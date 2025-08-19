@@ -64,6 +64,13 @@
           </div>
         <% end %>
 
+        <div class="field">
+          <%= form.label "TCGplayer Inventory", class: "label" %>
+          <div class="control">
+            <%= form.check_box :tcgplayer %>
+          </div>
+        </div>
+
         <div class="mt-4">
           <%= form.submit "Save",
                       class: "button is-large is-primary",

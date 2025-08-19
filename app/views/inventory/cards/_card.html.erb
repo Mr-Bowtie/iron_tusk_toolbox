@@ -35,6 +35,10 @@
     <p>No Image Found</p>
   <% end %>
 
+  <% if card.tcgplayer %>
+    <p class="has-text-centered has-text-danger">TCGPlayer</p>
+  <% end %>
+  
   <p class="has-text-centered"><b><%= card.metadata.name %></b></p>
   <p><%= card.metadata.set.upcase %>
     #<%= card.metadata.collector_number %></p>

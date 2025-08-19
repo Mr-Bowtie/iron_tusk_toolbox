@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_01_213414) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_19_200122) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -156,6 +156,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_01_213414) do
     t.bigint "card_metadatum_id"
     t.bigint "inventory_location_id"
     t.boolean "staged"
+    t.boolean "tcgplayer"
     t.index ["card_metadatum_id"], name: "index_inventory_cards_on_card_metadatum_id"
     t.index ["inventory_location_id"], name: "index_inventory_cards_on_inventory_location_id"
     t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_scryfall_id_and_foil_and_condition"

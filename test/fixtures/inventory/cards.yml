@@ -7,6 +7,7 @@
 #  foil                  :boolean
 #  quantity              :integer
 #  staged                :boolean
+#  tcgplayer             :boolean
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  card_metadatum_id     :bigint

@@ -1,7 +1,5 @@
 <div class="is-flex is-flex-direction-column is-align-items-center mb-4">
-  <h1
-    class="title is-1 has-text-centered my-4"
-  >Staging</h1>
+  <h1 class="title is-1 has-text-centered my-4">Staging</h1>
 
   <div>
     <%= form_with url: inventory_cards_clear_staging_path, method: :post, data: {confirm: "Are you sure?"} do |form| %>
@@ -11,8 +9,14 @@
 </div>
 
 <%= form_with url: inventory_cards_convert_to_inventory_url, class: "mb-6 " ,method: :post do |form| %>
-  <div class="convert-inventory-form">
-    <div class="field" data-controller="choices">
+  <div class="is-flex is-flex-direction-column is-align-items-center width-50 margin-auto">
+    <div class="field full-width">
+      <%= form.label "Create new location", class: "label" %>
+      <div class="control">
+        <%= form.text_field :new_location_label, class: "input" %>
+      </div>
+    </div>
+    <div class="field full-width mt-2" data-controller="choices">
       <%= form.label "Select existing location", class: "label" %>
       <div class="control">
         <%= form.select :existing_location_id,
@@ -22,14 +26,13 @@
       </div>
     </div>
 
-    <div class="field">
-      <%= form.label "Create new location", class: "label" %>
+    <div class="field level mt-2">
+      <%= form.label :tcgplayer, "TCGplayer Inventory" %>
       <div class="control">
-        <%= form.text_field :new_location_label, class: "input" %>
+        <%= form.check_box :tcgplayer %>
       </div>
     </div>
-
-    <%= form.submit "Convert to inventory", class: "button is-primary"%>
+    <%= form.submit "Convert to inventory", class: "button is-primary mt-3" %>
   </div>
 
 <% end %>
