@@ -22,7 +22,7 @@ module ManapoolClient
     [ req, uri ]
   end
 
-  def self.fetch_orders(unfulfilled: true, limit: 100)
+  def self.fetch_orders(unfulfilled: true, limit: 100, since:)
     offset = 0
     orders = []
 
@@ -30,7 +30,7 @@ module ManapoolClient
       req, uri = create_request(
         url: "#{API_BASE}/orders",
         method: "get",
-        params: { is_unfulfilled: unfulfilled, limit: limit, offset: offset }
+        params: { is_fulfilled: !unfulfilled, since: since, limit: limit, offset: offset }
       )
 
       res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
