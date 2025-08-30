@@ -85,7 +85,7 @@ class Inventory::Card < ApplicationRecord
   # maps foil input from field in ingested csv to internal boolean
   def self.map_foil(foil)
     case foil
-    when "FO", /^.*Foil$/, "EF"
+    when "FO", /^.*Foil$/, "EF", "etched"
       true
     else
       false
