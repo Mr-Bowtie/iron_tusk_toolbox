@@ -2,7 +2,8 @@ module Inventory
   class Puller
     SUPPORTED_FORMATS = {
       "manapool_csv" => InventoryFinder::Manapool,
-      "tcgplayer_pull_sheet" => InventoryFinder::Tcgplayer
+      "tcgplayer_pull_sheet" => InventoryFinder::Tcgplayer,
+      "manabox_csv" => InventoryFinder::Manabox
     }.freeze
 
     def self.process(file_path:, format:)
@@ -10,7 +11,7 @@ module Inventory
       raise ArgumentError, "Unsupported format: #{format}" unless finding_class
 
       CsvParser.parse(file_path).each do |row|
-        # TODO: extract this somehow
+        # TODO: extract this to finding_class
         card_name = nil
         condition = nil
         foil = nil
@@ -37,6 +38,14 @@ module Inventory
           set_name =  row["Set"]
           number = row["Number"]
           tcgplayer = true
+        when "manabox_csv"
+          card_name = row["Name"]
+          condition = row["Condition"]
+          foil = row["Foil"]
+          quantity = row["Quantity"]
+          set_code = row["Set Code"]
+          number = row["Collector Number"]
+
         else
         end
 
@@ -63,7 +72,7 @@ module Inventory
 
         if item_count < pull_count
            PullError.create!(
-            message: "Insufficient inventory quantity. Requested: #{row['quantity']}, Found: #{pull_count}",
+            message: "Insufficient inventory quantity. Requested: #{quantity}, Found: #{item_count}",
             item_type: "card",
             data: {
               name: card_name,
