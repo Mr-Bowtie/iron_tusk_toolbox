@@ -14,6 +14,7 @@ class CsvService < ApplicationService
     work_queue = Queue.new
     threads = []
 
+    # TODO: refactor to use background jobs for large imports
     thread_count.times do
       threads << Thread.new do
         while (batch = work_queue.pop) != :END
@@ -26,7 +27,8 @@ class CsvService < ApplicationService
 
     batch = []
     CsvParser.parse(file_path).each do |row|
-      next if row.any? {|_,v| v.nil? }
+      # TODO: refactor to have bad row checker
+      next if row["Name"].nil?
       batch << row
       if batch.size >= batch_size
         work_queue << batch
@@ -39,4 +41,3 @@ class CsvService < ApplicationService
     threads.each(&:join)
   end
 end
-
