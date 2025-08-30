@@ -14,7 +14,7 @@ module InventoryFinder
 
     private
 
-    def set_name_converter(name)
+    def self.set_name_converter(name)
       if name.include?("Commander:")
         name = name.gsub("Commander: ", "") + " Commander"
       end
