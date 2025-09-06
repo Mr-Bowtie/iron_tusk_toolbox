@@ -43,6 +43,20 @@
 </div>
 
 <div>
+  <%= form_with url: '/inventory/convert_magic_sorter_to_manabox', local: true, multipart: true, method: :post, data: {turbo: false} do |form| %>
+    <div class="field">
+      <%= form.label "Convert Magic Sorter CSV to Manabox", class: "label" %>
+      <div class="control">
+        <%= form.file_field :magic_sorter_csv, accept: "text/csv", class: "input" %>
+      </div>
+    </div>
+    <div>
+      <%= form.submit "Convert", class: "button is-primary" %>
+    </div>
+  <% end %>
+</div>
+
+<div>
   <h2 class="subtitle">Cards in Inventory: <%= @inventory_card_count %></h2>
 </div>
 
