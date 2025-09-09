@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     post "cards/pull_item" => "cards#pull_item"
     get "cards/add_items" => "cards#add_items"
     post "cards/stage_item" => "cards#stage_item"
+    post "/convert_magic_sorter_to_manabox" => "base#convert_magic_sorter_to_manabox"
     
     resources :cards
   end

@@ -514,6 +514,7 @@ DEPENDENCIES
   rspec
   rspec-rails
   rubocop-rails-omakase
+  rubyzip
   selenium-webdriver
   solargraph
   sprockets-rails

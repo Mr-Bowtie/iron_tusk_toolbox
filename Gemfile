@@ -42,6 +42,7 @@ gem "fast_jsonparser"
 # Job scheduling and background processing
 gem "good_job"  # PostgreSQL-based background jobs
 gem "whenever", require: false  # For cron job scheduling
+gem 'rubyzip', require: 'zip'
 
 group :development, :test do
   gem "pry-byebug"
