@@ -3,6 +3,7 @@ module Inventory
     SUPPORTED_FORMATS = {
       "manapool_csv" => InventoryFinder::Manapool,
       "tcgplayer_pull_sheet" => InventoryFinder::Tcgplayer,
+      "tcgplayer_ri_pull_sheet" => InventoryFinder::TcgplayerReimbursmentInvoice,
       "manabox_csv" => InventoryFinder::Manabox
     }.freeze
 
@@ -10,7 +11,25 @@ module Inventory
       finding_class = SUPPORTED_FORMATS[format]
       raise ArgumentError, "Unsupported format: #{format}" unless finding_class
 
-      CsvParser.parse(file_path).each do |row|
+      csv = nil
+      if finding_class == InventoryFinder::TcgplayerReimbursmentInvoice
+        headers = []
+        data = []
+
+        CsvParser.parse(file_path, headers: false).with_index do |row, index|
+          if index == 1
+            headers = row
+          elsif index > 1
+            data << headers.zip(row).to_h
+          end
+        end
+
+        csv = data
+      else
+        csv = CsvParser.parse(file_path)
+      end
+
+      csv.each do |row|
         # TODO: extract this to finding_class
         card_name = nil
         condition = nil
@@ -38,6 +57,14 @@ module Inventory
           set_name =  row["Set"]
           number = row["Number"]
           tcgplayer = true
+        when "tcgplayer_ri_pull_sheet"
+          card_name = row["Card Name"].sub(/\s*\(.*?\)\s*$/, "")
+          condition = row["Condition"].sub(/\s*Foil$/, "")
+          foil = row["Condition"].include?("Foil")
+          quantity = row["Quantity"]
+          set_name = row["Set Name"]
+          number = row["Number"]
+          tcgplayer = true
         when "manabox_csv"
           card_name = row["Name"]
           condition = row["Condition"]
@@ -45,7 +72,6 @@ module Inventory
           quantity = row["Quantity"]
           set_code = row["Set Code"]
           number = row["Collector Number"]
-
         else
         end
 
@@ -55,7 +81,7 @@ module Inventory
 
         if items.empty? || item_count == 0
            PullError.create!(
-            message: "no Item found in inventory",
+            message: "no Item found in inventory. Requested quantity: #{quantity}",
             item_type: "card",
             data: {
               name: card_name,
