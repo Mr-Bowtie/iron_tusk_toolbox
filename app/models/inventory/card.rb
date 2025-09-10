@@ -64,7 +64,8 @@ class Inventory::Card < ApplicationRecord
   #
   # this normalizes conditions from fields in csv's getting processed
   def self.map_condition(condition)
-    case condition
+    noramilzed_condition = condition.split(" ").reject { |w| w == "Foil" }.join(" ")
+    case noramilzed_condition
     when "mint", "NM", "Near Mint"
       "near_mint"
     when "LP", "Lightly Played", "near_mint"
