@@ -1,5 +1,6 @@
 module InventoryFinder
   class Tcgplayer
+    extend TcgplayerHelpers
     def self.find_from_csv(row)
       Inventory::Card.joins(:metadata, :inventory_location).where(
         tcgplayer: true,
@@ -12,14 +13,5 @@ module InventoryFinder
       ).order("inventory_locations.label ASC").to_a
     end
 
-    private
-
-    def self.set_name_converter(name)
-      if name.include?("Commander:")
-        name = name.gsub("Commander: ", "") + " Commander"
-      end
-
-      name
-    end
   end
 end
