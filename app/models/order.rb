@@ -8,7 +8,7 @@
 #  fulfillment_data  :jsonb
 #  items             :jsonb
 #  marketplace_label :string
-#  net_earned        :integer
+#  net_earned        :integeir
 #  placed_at         :datetime
 #  shipping_method   :string
 #  shipping_paid     :integer

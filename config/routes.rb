@@ -6,7 +6,6 @@ Rails.application.routes.draw do
 
   devise_for :users
   resources :inventory_locations
-  resources :tags
   namespace :inventory do
     resources :locations
     get "/" => "base#dashboard" 

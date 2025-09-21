@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_19_200122) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_19_155110) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -44,15 +44,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_19_200122) do
     t.jsonb "back_image_uris", default: {}
     t.date "released_at"
     t.index ["scryfall_id"], name: "index_card_metadata_on_scryfall_id", unique: true
-  end
-
-  create_table "card_tags", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "card_id"
-    t.bigint "tag_id"
-    t.index ["card_id"], name: "index_card_tags_on_card_id"
-    t.index ["tag_id"], name: "index_card_tags_on_tag_id"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -212,13 +203,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_19_200122) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["sync_type"], name: "index_sync_statuses_on_sync_type", unique: true
-  end
-
-  create_table "tags", force: :cascade do |t|
-    t.integer "kind"
-    t.string "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
