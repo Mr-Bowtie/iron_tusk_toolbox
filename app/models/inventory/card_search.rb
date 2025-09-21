@@ -21,7 +21,7 @@ module Inventory
 
       if params[:set].present?
         string = "LOWER(card_metadata.set) LIKE ?"
-        # make sure we can chain querys together 
+        # make sure we can chain querys together
         string = " AND " + string if query_strings.length > 0
         param = "%#{params[:set].downcase}%"
 
@@ -61,8 +61,6 @@ module Inventory
       query_template_string = query_strings.join
       query_params.unshift(query_template_string)
       Inventory::Card.includes(:metadata, :inventory_location).references(:metadata, :inventory_location).where(query_params).order("card_metadata.name ASC")
-
     end
   end
 end
- 
