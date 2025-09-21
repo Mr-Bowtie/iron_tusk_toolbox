@@ -1,2 +1,4 @@
 (C) add scryfall sync status monitoring
 (B) add input to set condition for all staging items
+(A) fix TCGplayer pull sheet commander set conversion
+(B) fix image display for double sided cards

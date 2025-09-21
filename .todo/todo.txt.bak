@@ -1,4 +1,4 @@
-x 2025-07-17 add search for inventory 
-x 2025-07-17 wire up single card data updating
-x 2025-07-17 add single card quick view/update form
 (C) add scryfall sync status monitoring
+(B) add input to set condition for all staging items
+(A) fix TCGplayer pull sheet commander set conversion
+x 2025-08-30 add manabox CSV pull type
