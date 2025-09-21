@@ -74,6 +74,7 @@ group :test do
   gem "selenium-webdriver"
   gem "rspec"
   gem "rspec-rails"
+  gem "faker"
 end
 
 gem "bulma-rails", "~> 1.0"

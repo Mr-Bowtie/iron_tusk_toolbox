@@ -137,6 +137,8 @@ GEM
     factory_bot_rails (6.5.0)
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
+    faker (3.5.2)
+      i18n (>= 1.8.11, < 2)
     fast_jsonparser (0.6.0)
     ffi (1.17.2-aarch64-linux-gnu)
     ffi (1.17.2-aarch64-linux-musl)
@@ -498,6 +500,7 @@ DEPENDENCIES
   dockerfile-rails (>= 1.7)
   dotenv-rails
   factory_bot_rails
+  faker
   fast_jsonparser
   foreman (~> 0.88.1)
   good_job
