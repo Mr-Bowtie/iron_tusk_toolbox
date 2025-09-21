@@ -5,14 +5,17 @@
 #  id                    :bigint           not null, primary key
 #  data                  :jsonb
 #  inventory_type        :integer
+#  pulled                :boolean
 #  quantity              :integer          not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  inventory_location_id :bigint           not null
+#  pull_batches_id       :bigint
 #
 # Indexes
 #
 #  index_pull_items_on_inventory_location_id  (inventory_location_id)
+#  index_pull_items_on_pull_batches_id        (pull_batches_id)
 #
 # Foreign Keys
 #
@@ -20,6 +23,7 @@
 #
 class PullItem < ApplicationRecord
   belongs_to :inventory_location, class_name: "Inventory::Location"
+  belongs_to :pull_batch
 
   enum :inventory_type, [
     :card
@@ -47,7 +51,7 @@ class PullItem < ApplicationRecord
       tcgplayer: data["tcgplayer"]
     )
 
-    inv_card.card_metadatum_id ||= data['card_metadatum_id']
+    inv_card.card_metadatum_id ||= data["card_metadatum_id"]
     inv_card.quantity ||= 0
     inv_card.quantity += quantity
     inv_card.save!

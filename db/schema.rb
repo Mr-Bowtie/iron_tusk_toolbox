@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_19_155110) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_21_200205) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -178,12 +178,22 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_19_155110) do
     t.jsonb "address_data"
   end
 
+  create_table "pull_batches", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "assigned_user_id", null: false
+    t.boolean "completed"
+    t.index ["assigned_user_id"], name: "index_pull_batches_on_assigned_user_id"
+  end
+
   create_table "pull_errors", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "message"
     t.integer "item_type"
     t.jsonb "data"
+    t.bigint "pull_batches_id"
+    t.index ["pull_batches_id"], name: "index_pull_errors_on_pull_batches_id"
   end
 
   create_table "pull_items", force: :cascade do |t|
@@ -193,7 +203,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_19_155110) do
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "pull_batches_id"
+    t.boolean "pulled"
     t.index ["inventory_location_id"], name: "index_pull_items_on_inventory_location_id"
+    t.index ["pull_batches_id"], name: "index_pull_items_on_pull_batches_id"
   end
 
   create_table "sync_statuses", force: :cascade do |t|
@@ -217,5 +230,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_19_155110) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "pull_batches", "users", column: "assigned_user_id"
   add_foreign_key "pull_items", "inventory_locations"
 end
