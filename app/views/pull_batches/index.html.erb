@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Pull batches" %>
+
+<h1>Pull batches</h1>
+
+<div id="pull_batches">
+  <% @pull_batches.each do |pull_batch| %>
+    <%= render pull_batch %>
+    <p>
+      <%= link_to "Show this pull batch", pull_batch %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New pull batch", new_pull_batch_path %>
