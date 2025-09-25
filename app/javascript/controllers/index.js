@@ -19,5 +19,8 @@ application.register("navbar", NavbarController)
 import PagyInitializerController from "./pagy_initializer_controller"
 application.register("pagy-initializer", PagyInitializerController)
 
+import PullBatchController from "./pull_batch_controller"
+application.register("pull-batch", PullBatchController)
+
 import QuickViewController from "./quick_view_controller"
 application.register("quick-view", QuickViewController)
