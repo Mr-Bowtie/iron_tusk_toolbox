@@ -182,7 +182,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_21_200205) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "assigned_user_id", null: false
-    t.boolean "completed"
+    t.boolean "completed", default: false
     t.string "label"
     t.index ["assigned_user_id"], name: "index_pull_batches_on_assigned_user_id"
   end
