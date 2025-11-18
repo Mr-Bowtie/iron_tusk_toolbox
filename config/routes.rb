@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   resources :inventory_locations
   namespace :inventory do
     resources :locations
+    resources :location_merges, only: [ :index, :create, :show ] do
+      post :revert, on: :member
+    end
     get "/" => "base#dashboard" 
     get "cards/staging" => "cards#staging"
     post "cards/process_import_for_staging" => "cards#process_import_for_staging"

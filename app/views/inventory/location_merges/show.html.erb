@@ -1,0 +1,98 @@
+<section class="section pt-4">
+  <div class="content">
+    <%= link_to "← Back to merge history",
+    inventory_location_merges_path,
+    class: "has-text-link" %>
+    <h1 class="title is-3 mt-2">
+      <%= @location_merge.source_location.label %>
+      &rarr;
+      <%= @location_merge.destination_location.label %>
+    </h1>
+    <p class="subtitle is-5">Merged on
+      <%= l(@location_merge.created_at, format: :long) %></p>
+  </div>
+</section>
+
+<section class="box">
+  <div class="level">
+    <div class="level-left">
+      <% if @location_merge.reverted? %>
+        <p class="tag is-light is-medium">Reverted on
+          <%= l(@location_merge.reverted_at, format: :long) %>
+          (<%= @location_merge.reverted_card_count %>
+          cards moved back)</p>
+      <% else %>
+        <p class="tag is-success is-light is-medium">Active merge</p>
+      <% end %>
+    </div>
+    <div class="level-right">
+      <% unless @location_merge.reverted? %>
+        <%= button_to "Revert this merge",
+        revert_inventory_location_merge_path(@location_merge),
+        method: :post,
+        class: "button is-warning mb-2",
+        data: {
+          turbo_confirm:
+            "Revert this merge and move cards back to #{@location_merge.source_location.label}?",
+        } %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column">
+      <div class="notification is-danger is-light">
+        <p class="title is-5 mb-2"><%= @location_merge.source_location.label %></p>
+        <p class="subtitle is-6">Source Location</p>
+        <p><strong>Cards moved:</strong>
+          <%= @location_merge.moved_card_count %></p>
+        <p class="is-size-7 mt-2">Displaying
+          <%= @source_cards.size %>
+          cards currently found in inventory.</p>
+        <p class="is-size-7">Cards from this stack are highlighted in red.</p>
+      </div>
+    </div>
+    <div class="column">
+      <div class="notification is-info is-light">
+        <p class="title is-5 mb-2"><%= @location_merge.destination_location.label %></p>
+        <p class="subtitle is-6">Destination (pre-merge)</p>
+        <p><strong>Existing cards:</strong>
+          <%= @location_merge.destination_card_ids&.length.to_i %></p>
+        <p class="is-size-7 mt-2">Displaying
+          <%= @destination_cards.size %>
+          cards that were found when viewing this merge.</p>
+        <p class="is-size-7 mt-2">These cards keep their blue overlay for easy sorting.</p>
+      </div>
+    </div>
+  </div>
+
+  <% if @gallery_cards.any? %>
+    <div class="level mb-4">
+      <div class="level-left">
+        <h2 class="title is-5 mb-0">Alphabetized Gallery</h2>
+      </div>
+      <div class="level-right">
+        <span class="tag location-card--source-tag">Source</span>
+        <span class="tag location-card--destination-tag ml-2">Destination</span>
+      </div>
+    </div>
+
+    <div class="columns is-multiline is-variable is-2">
+      <% @gallery_cards.each do |entry| %>
+        <% card = entry[:card] %>
+        <% origin = entry[:origin] %>
+        <div class="column is-narrow is-2">
+          <div class="card location-card location-card--<%= origin %>">
+            <%= render card %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <article class="message is-warning">
+      <div class="message-body">
+        No card data is associated with this merge.
+      </div>
+    </article>
+  <% end %>
+</section>

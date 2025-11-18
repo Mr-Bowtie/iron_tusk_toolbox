@@ -128,3 +128,44 @@
   border: 2px solid $info;
   border-radius: 5px;
 }
+
+.location-card {
+  border: 3px solid transparent;
+  border-radius: 8px;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.location-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.location-card--source {
+  border-color: $danger;
+}
+
+.location-card--source::after {
+  background: rgba(241, 70, 104, 0.12);
+}
+
+.location-card--destination {
+  border-color: $link;
+}
+
+.location-card--destination::after {
+  background: rgba(50, 115, 220, 0.12);
+}
+
+.location-card--source-tag {
+  background: $danger;
+  color: #fff;
+}
+
+.location-card--destination-tag {
+  background: $link;
+  color: #fff;
+}

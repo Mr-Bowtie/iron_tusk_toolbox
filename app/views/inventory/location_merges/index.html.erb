@@ -1,0 +1,95 @@
+<section class="section pt-4">
+  <div class="content">
+    <h1 class="title is-3">Merge Inventory Locations</h1>
+    <p class="subtitle is-5">Move every card from one location into another. Each merge stores a red/blue gallery that you can revisit at any time.</p>
+  </div>
+</section>
+
+<section class="box">
+  <h2 class="title is-5">Merge Locations</h2>
+  <p>Pick the source location to empty and the destination that will receive the cards. After the merge finishes you’ll be redirected to a dedicated gallery page.</p>
+  <%= form_with url: inventory_location_merges_path, scope: :location_merge, local: true, class: "columns is-variable is-4 mt-4" do |form| %>
+    <div class="column is-half">
+      <div class="field">
+        <%= form.label :source_location_id, "Source Location", class: "label" %>
+        <div class="control select is-fullwidth">
+          <%= form.collection_select :source_location_id,
+                                     @locations,
+                                     :id,
+                                     :label,
+                                     { include_blank: "Choose a source", selected: @selected_source_id },
+                                     {} %>
+        </div>
+      </div>
+    </div>
+    <div class="column is-half">
+      <div class="field">
+        <%= form.label :destination_location_id, "Destination Location", class: "label" %>
+        <div class="control select is-fullwidth">
+          <%= form.collection_select :destination_location_id,
+                                     @locations,
+                                     :id,
+                                     :label,
+                                     { include_blank: "Choose a destination", selected: @selected_destination_id },
+                                     {} %>
+        </div>
+      </div>
+      <div class="buttons is-right mt-4">
+        <%= form.submit "Merge Inventory",
+                        class: "button is-danger",
+                        data: { turbo_confirm: "Merge the selected locations?" } %>
+      </div>
+    </div>
+  <% end %>
+</section>
+
+<section class="box">
+  <h2 class="title is-5">Merge History</h2>
+  <% if @location_merges.any? %>
+    <table class="table is-fullwidth is-striped">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Source</th>
+          <th>Destination</th>
+          <th>Cards moved</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @location_merges.each do |merge| %>
+          <tr>
+            <td><%= l(merge.created_at, format: :short) %></td>
+            <td><%= merge.source_location.label %></td>
+            <td><%= merge.destination_location.label %></td>
+            <td><%= merge.moved_card_count %></td>
+            <td>
+              <% if merge.reverted? %>
+                <span class="tag is-light">Reverted (<%= merge.reverted_card_count %>)</span>
+                <p class="is-size-7 mt-1">on <%= l(merge.reverted_at, format: :short) %></p>
+              <% else %>
+                <span class="tag is-success is-light">Active</span>
+              <% end %>
+            </td>
+            <td class="has-text-right">
+              <div class="buttons is-right is-justify-content-flex-end">
+                <%= link_to "View gallery",
+                            inventory_location_merge_path(merge),
+                            class: "button is-small is-link is-light" %>
+                <% unless merge.reverted? %>
+                  <%= button_to "Revert", revert_inventory_location_merge_path(merge),
+                                method: :post,
+                                class: "button is-small is-warning",
+                                data: { turbo_confirm: "Revert this merge and move cards back to #{merge.source_location.label}?" } %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="has-text-grey">No merges recorded yet.</p>
+  <% end %>
+</section>

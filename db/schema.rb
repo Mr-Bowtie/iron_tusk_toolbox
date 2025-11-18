@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_21_200205) do
+ActiveRecord::Schema[7.2].define(version: 2025_11_18_191658) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -153,6 +153,20 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_21_200205) do
     t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_scryfall_id_and_foil_and_condition"
   end
 
+  create_table "inventory_location_merges", force: :cascade do |t|
+    t.bigint "source_location_id", null: false
+    t.bigint "destination_location_id", null: false
+    t.bigint "inventory_card_ids", default: [], array: true
+    t.bigint "reverted_inventory_card_ids", default: [], array: true
+    t.datetime "reverted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "destination_card_ids", default: [], array: true
+    t.index ["destination_location_id"], name: "index_inventory_location_merges_on_destination_location_id"
+    t.index ["source_location_id", "destination_location_id"], name: "index_location_merges_on_source_and_destination"
+    t.index ["source_location_id"], name: "index_inventory_location_merges_on_source_location_id"
+  end
+
   create_table "inventory_locations", force: :cascade do |t|
     t.integer "position"
     t.string "label"
@@ -231,6 +245,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_21_200205) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "inventory_location_merges", "inventory_locations", column: "destination_location_id"
+  add_foreign_key "inventory_location_merges", "inventory_locations", column: "source_location_id"
   add_foreign_key "pull_batches", "users", column: "assigned_user_id"
   add_foreign_key "pull_items", "inventory_locations"
 end
