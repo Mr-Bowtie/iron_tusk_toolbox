@@ -23,7 +23,7 @@
 #
 class PullItem < ApplicationRecord
   belongs_to :inventory_location, class_name: "Inventory::Location"
-  belongs_to :pull_batch
+  belongs_to :pull_batch, optional: true
 
   enum :inventory_type, [
     :card
