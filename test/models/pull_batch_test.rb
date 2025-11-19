@@ -4,7 +4,6 @@
 #
 #  id               :bigint           not null, primary key
 #  completed        :boolean
-#  label            :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  assigned_user_id :bigint           not null

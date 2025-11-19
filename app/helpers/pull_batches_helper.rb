@@ -1,2 +1,0 @@
-module PullBatchesHelper
-end

@@ -4,7 +4,6 @@ class CreatePullBatches < ActiveRecord::Migration[7.2]
       t.timestamps
       t.references :assigned_user, null: false, foreign_key: { to_table: :users }
       t.boolean :completed
-      t.string :label
     end
   end
 end
