@@ -9,7 +9,14 @@ class Inventory::BaseController < ApplicationController
     end
     @locations = Inventory::Location.all
     @inventory_card_count = Inventory::Card.sum(:quantity)
-    @open_pull_batches = PullBatch.where(completed: false)
+    @pull_errors = PullError.all
+    @pull_items = PullItem.all.each_with_object({}) do |item, memo|
+      if memo[item.inventory_type].nil?
+        memo[item.inventory_type] = item.quantity
+      else
+        memo[item.inventory_type] += item.quantity
+      end
+    end
   end
 
   def convert_magic_sorter_to_manabox

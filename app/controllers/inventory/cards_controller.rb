@@ -26,33 +26,7 @@ class Inventory::CardsController < ApplicationController
   end
 
   def pull_inventory
-    # check if batch_id is an actual id for an existing batch or a label for a new batch
-    batch = nil
-    record_not_found = false
-    batch_create_failure = false
-
-    if params[:batch_id].to_i.to_s == params[:batch_id]
-      begin
-        batch = PullBatch.find(params[:batch_id])
-      rescue ActiveRecord::RecordNotFound => e
-        record_not_found = true
-      end
-    else
-      begin
-        batch = PullBatch.create(label: params[:batch_id], assigned_user_id: current_user.id)
-      rescue ActiveRecord::NotNullViolation, ActiveRecord::InvalidForeignKey
-        batch_create_failure = true
-      end
-    end
-
-    if record_not_found
-      flash[:alert] = "no batch could be found with id: #{params[:batch_id]}"
-    elsif batch_create_failure
-      flash[:alert] = "There was an error creating a new batch, please try again"
-    else
-      Inventory::Puller.process(file_path: pull_csv_params[:csv].path, format: pull_csv_params[:format], batch_id: batch.id)
-    end
-
+    Inventory::Puller.process(file_path: params[:csv].path, format: params[:format])
 
     redirect_to inventory_path
   end
@@ -102,7 +76,7 @@ class Inventory::CardsController < ApplicationController
     redirect_to inventory_path
   end
 
-  # TODO: add strong params
+  #TODO: add strong params
   def convert_to_inventory
     location = nil
     if params[:new_location_label].length > 0
@@ -209,10 +183,7 @@ class Inventory::CardsController < ApplicationController
         :set,
         :collector_number
       )
-    end
-
-    def pull_csv_params
-      params.permit(:csv, :format, :batch_id)
+      
     end
 
     def stage_item_params

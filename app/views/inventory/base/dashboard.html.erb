@@ -20,12 +20,12 @@
     <% end %>
   </div>
 
-  <div class="column is-one-third has-text-centered" data-controller="pull-batch">
+  <div class="column is-one-third has-text-centered">
     <%= form_with url: '/inventory/cards/pull_inventory', multipart: true, method: :post, target: "_blank" do |form| %>
       <div class="field">
         <%= form.label "Pull items from CSV", class: "label" %>
         <div class="control">
-          <%= form.file_field :csv, accept: "text/csv", class: "input", data: { pull_batch_target: "csvInput", action: "change->pull-batch#validateCsvForm" } %>
+          <%= form.file_field :csv, accept: "text/csv", class: "input" %>
         </div>
       </div>
       <div class="field">
@@ -39,17 +39,8 @@
           %>
         </div>
       </div>
-      <div class="my-2">
-        <div class="field" data-controller="choices" data-pull-batch-target="chooseExistingWrapper">
-          <%= form.label "Select or Create Batch", class: "label" %>
-          <div class="control">
-            <%= form.select :batch_id, @open_pull_batches.map { |pb| [pb.label, pb.id]}, {include_blank: true}, class: "mb-2 choice-select additive-choices has-text-black", data: { pull_batch_target: "batchInput", action: "change->pull-batch#validateCsvForm"} %>
-            <p class="has-text-centered has-text-weight-bold has-text-danger integer-error is-hidden">Batch label cannot be an integer. Must contain other text characters</p>
-          </div>
-        </div>
-      </div>
       <div>
-        <%= form.submit "Pull", class: "button is-primary has-text-offwhite", data: { pull_batch_target: "csvPullSubmit"} %>
+        <%= form.submit "Pull", class: "button is-primary has-text-offwhite" %>
       </div>
     <% end %>
 
