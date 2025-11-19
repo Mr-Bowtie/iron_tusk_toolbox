@@ -3,7 +3,7 @@
 # Table name: pull_batches
 #
 #  id               :bigint           not null, primary key
-#  completed        :boolean          default(FALSE)
+#  completed        :boolean
 #  label            :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null

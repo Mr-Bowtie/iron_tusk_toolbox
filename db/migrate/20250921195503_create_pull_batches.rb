@@ -3,7 +3,7 @@ class CreatePullBatches < ActiveRecord::Migration[7.2]
     create_table :pull_batches do |t|
       t.timestamps
       t.references :assigned_user, null: false, foreign_key: { to_table: :users }
-      t.boolean :completed, default: false
+      t.boolean :completed
       t.string :label
     end
   end
