@@ -7,7 +7,7 @@ module Inventory
       "manabox_csv" => InventoryFinder::Manabox
     }.freeze
 
-    def self.process(file_path:, format:, batch_id:)
+    def self.process(file_path:, format:)
       finding_class = SUPPORTED_FORMATS[format]
       raise ArgumentError, "Unsupported format: #{format}" unless finding_class
 
