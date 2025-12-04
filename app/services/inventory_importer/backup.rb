@@ -40,7 +40,7 @@ module InventoryImporter
     end
 
     def integer_columns
-      @integer_columns ||= %w[id manabox_id quantity card_metadatum_id inventory_location_id condition]
+      @integer_columns ||= %w[manabox_id quantity]
     end
 
     def boolean_columns
