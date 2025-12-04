@@ -1,0 +1,33 @@
+<div><h1 class="title is-1 has-text-centered">Backup management</h1></div>
+<div class="section">
+  <%= form_with url: inventory_backups_path, local: true, data: {turbo: false} do |form| %>
+    <div class="field">
+      <div class="control">
+        <%= form.submit "Create Backup", class: "button is-primary is-outlined is-large" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+<div class="section">
+  <h1 class="title is-2">Restore inventory from backup</h1>
+
+  <div class="notification is-warning mb-6 has-text-centered is-size-4">
+    This will wipe existing inventory and load new inventory from a backup
+    file. USE CAUTION
+  </div>
+
+  <%= form_with url: inventory_backups_restore_path, scope: :backup, html: { multipart: true }, local: true do |form| %>
+    <div class="field">
+      <label class="label">Backup file (CSV)</label>
+      <div class="control">
+        <%= form.file_field :file, accept: "text/csv", class: "input" %>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="control">
+        <%= form.submit "Restore inventory", class: "button is-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>

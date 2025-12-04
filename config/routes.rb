@@ -11,7 +11,10 @@ Rails.application.routes.draw do
     resources :location_merges, only: [ :index, :create, :show ] do
       post :revert, on: :member
     end
-    get "/" => "base#dashboard" 
+    resources :backups, only: [ :manage_backups, :create, :restore ]
+    get "backups/manage"
+    post "backups/restore"
+    get "/" => "base#dashboard"
     get "cards/staging" => "cards#staging"
     post "cards/process_import_for_staging" => "cards#process_import_for_staging"
     post "cards/clear_staging" => "cards#clear_staging"
@@ -26,7 +29,7 @@ Rails.application.routes.draw do
     get "cards/add_items" => "cards#add_items"
     post "cards/stage_item" => "cards#stage_item"
     post "/convert_magic_sorter_to_manabox" => "base#convert_magic_sorter_to_manabox"
-    
+
     resources :cards
   end
   resources :card_metadata
