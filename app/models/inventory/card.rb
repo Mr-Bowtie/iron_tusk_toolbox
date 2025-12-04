@@ -33,8 +33,9 @@ class Inventory::Card < ApplicationRecord
     :damaged
   ]
 
-  def pull!(amount: 0, all_in_location: false)
+  def pull!(amount: 0, all_in_location: false, pull_metadata: {})
     amount = all_in_location ? self.quantity : amount
+    pull_metadata ||= {}
 
     ActiveRecord::Base.transaction do
       PullItem.create!(
@@ -50,7 +51,7 @@ class Inventory::Card < ApplicationRecord
           condition: self.condition,
           card_metadatum_id: self.card_metadatum_id,
           tcgplayer: self.tcgplayer
-          }
+        }.merge(pull_metadata)
       )
     end
 

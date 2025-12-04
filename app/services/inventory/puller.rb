@@ -29,7 +29,7 @@ module Inventory
         csv = CsvParser.parse(file_path)
       end
 
-      csv.each do |row|
+      csv.each_with_index do |row, csv_position|
         # TODO: extract this to finding_class
         card_name = nil
         condition = nil
@@ -39,6 +39,7 @@ module Inventory
         set_name = nil
         number = nil
         tcgplayer = false
+        pull_metadata = { source_format: format }
 
         case format
         when "manapool_csv"
@@ -65,6 +66,7 @@ module Inventory
           set_name = row["Set Name"]
           number = row["Number"]
           tcgplayer = true
+          pull_metadata[:csv_position] = csv_position
         when "manabox_csv"
           card_name = row["Name"]
           condition = row["Condition"]
@@ -118,11 +120,11 @@ module Inventory
           active_item = items.pop
 
           if active_item.quantity > pull_count
-            active_item.pull!(amount: pull_count)
+            active_item.pull!(amount: pull_count, pull_metadata: pull_metadata)
             pull_count = 0
           else
             pull_count -= active_item.quantity
-            active_item.pull!(all_in_location: true)
+            active_item.pull!(all_in_location: true, pull_metadata: pull_metadata)
           end
         end
       end
