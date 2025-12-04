@@ -3,7 +3,7 @@ require "fileutils"
 
 module InventoryExporter
   class Backup < ApplicationService
-    EXCLUDED_COLUMNS = %w[created_at updated_at].freeze
+    EXCLUDED_COLUMNS = %w[created_at updated_at card_metadatum_id inventory_location_id].freeze
 
     def self.export_inventory_cards(output_path: nil, scope: Inventory::Card.all)
       new(scope: scope, output_path: output_path).export_inventory_cards
@@ -17,9 +17,11 @@ module InventoryExporter
     def export_inventory_cards
       FileUtils.mkdir_p(File.dirname(output_path))
 
-      CSV.open(output_path, "w", write_headers: true, headers: columns) do |csv|
+      CSV.open(output_path, "w", write_headers: true, headers: csv_columns) do |csv|
         scope.find_each do |card|
-          csv << columns.map { |column| card.public_send(column) }
+          data = table_columns.map { |column| card.public_send(column) }
+          data << card.inventory_location.label
+          csv << data
         end
       end
 
@@ -30,8 +32,12 @@ module InventoryExporter
 
     attr_reader :scope, :output_path
 
-    def columns
-      @columns ||= Inventory::Card.column_names - EXCLUDED_COLUMNS
+    def table_columns
+      Inventory::Card.column_names - EXCLUDED_COLUMNS
+    end
+
+    def csv_columns
+      @csv_columns ||= table_columns + ["location_label"]
     end
 
     def default_path
