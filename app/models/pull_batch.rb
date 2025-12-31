@@ -20,4 +20,11 @@
 class PullBatch < ApplicationRecord
   has_many :pull_items, dependent: :nullify, foreign_key: :pull_batches_id
   has_many :pull_errors, dependent: :delete_all, foreign_key: :pull_batches_id
+  has_one :assigned_user, class_name: "User"
+  before_destroy :revert_pull_items
+
+  private
+  def revert_pull_items
+    pull_items.each { |pi| pi.undo! } if completed
+  end
 end
