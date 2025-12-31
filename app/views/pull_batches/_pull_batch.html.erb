@@ -1,2 +1,24 @@
-<div id="<%= dom_id pull_batch %>">
+<% show_actions = local_assigns.fetch(:show_actions, false) %>
+<div id="<%= dom_id pull_batch %>" class="box">
+  <div class="level mb-2">
+    <div class="level-left">
+      <p class="title is-5 mb-0">
+        <%= pull_batch.label.presence || "Pull Batch ##{pull_batch.id}" %>
+      </p>
+    </div>
+    <div class="level-right">
+      <% if pull_batch.completed? %>
+        <span class="tag is-success">Completed</span>
+      <% else %>
+        <span class="tag is-warning">Open</span>
+      <% end %>
+    </div>
+  </div>
+
+  <% if show_actions %>
+    <div class="buttons">
+      <%= link_to "Show", pull_batch, class: "button is-small is-link" %>
+      <%= link_to "Edit", edit_pull_batch_path(pull_batch), class: "button is-small" %>
+    </div>
+  <% end %>
 </div>

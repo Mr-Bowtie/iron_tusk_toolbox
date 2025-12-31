@@ -1,12 +1,17 @@
-<% content_for :title, "Editing pull batch" %>
+<% content_for :title, "Edit Pull Batch" %>
 
-<h1>Editing pull batch</h1>
+<section class="section pt-4">
+  <div class="level">
+    <div class="level-left">
+      <h1 class="title is-1">Edit Pull Batch</h1>
+    </div>
+    <div class="level-right">
+      <div class="buttons">
+        <%= link_to "Show", @pull_batch, class: "button is-link" %>
+        <%= link_to "Back", pull_batches_path, class: "button" %>
+      </div>
+    </div>
+  </div>
 
-<%= render "form", pull_batch: @pull_batch %>
-
-<br>
-
-<div>
-  <%= link_to "Show this pull batch", @pull_batch %> |
-  <%= link_to "Back to pull batches", pull_batches_path %>
-</div>
+  <%= render "form", pull_batch: @pull_batch %>
+</section>

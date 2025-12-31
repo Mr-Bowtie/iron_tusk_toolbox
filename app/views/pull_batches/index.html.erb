@@ -1,16 +1,24 @@
-<p style="color: green"><%= notice %></p>
+<% if notice.present? %>
+  <div class="notification is-success">
+    <%= notice %>
+  </div>
+<% end %>
 
-<% content_for :title, "Pull batches" %>
+<% content_for :title, "Pull Batches" %>
 
-<h1>Pull batches</h1>
-
-<div id="pull_batches">
-  <% @pull_batches.each do |pull_batch| %>
-    <%= render pull_batch %>
-    <p>
-      <%= link_to "Show this pull batch", pull_batch %>
-    </p>
-  <% end %>
+<div class="level">
+  <div class="level-left">
+    <h1 class="title is-1">Pull Batches</h1>
+  </div>
+  <div class="level-right">
+    <%= link_to "New Pull Batch", new_pull_batch_path, class: "button is-primary" %>
+  </div>
 </div>
 
-<%= link_to "New pull batch", new_pull_batch_path %>
+<div class="columns is-multiline" id="pull_batches">
+  <% @pull_batches.each do |pull_batch| %>
+    <div class="column is-one-third">
+      <%= render pull_batch, show_actions: true %>
+    </div>
+  <% end %>
+</div>

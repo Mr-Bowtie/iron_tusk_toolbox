@@ -1,10 +1,32 @@
-<p style="color: green"><%= notice %></p>
+<% if notice.present? %>
+  <div class="notification is-success">
+    <%= notice %>
+  </div>
+<% end %>
 
-<%= render @pull_batch %>
-
-<div>
-  <%= link_to "Edit this pull batch", edit_pull_batch_path(@pull_batch) %> |
-  <%= link_to "Back to pull batches", pull_batches_path %>
-
-  <%= button_to "Destroy this pull batch", @pull_batch, method: :delete %>
+<div class="level">
+  <div class="level-left">
+    <h1 class="title is-1">Pull Batch</h1>
+  </div>
+  <div class="level-right">
+    <div class="buttons">
+      <%= link_to "Back", pull_batches_path, class: "button" %>
+      <%= button_to "Destroy", @pull_batch, method: :delete, class: "button is-danger", form_class: "is-inline" %>
+    </div>
+  </div>
 </div>
+
+<% unless @batch_items.nil? || @batch_items.length == 0 %>
+    <div class="mt-6">
+    <%== pagy_bulma_nav(@pagy) %>
+    <div class="columns is-multiline mt-4">
+      <% @batch_items.each do |pull_item|%>
+        <div class="column is-narrow is-2">
+          <%= render partial: "pull_items/pull_item", locals: {pull_item: pull_item, metadata: CardMetadatum.find(pull_item.data["card_metadatum_id"]) } %>
+          <%= render partial: "pull_items/quick_view", locals: { pull_item: pull_item, locations: @locations, metadata: CardMetadatum.find(pull_item.data["card_metadatum_id"]) } %>
+        </div>
+      <% end %>
+    </div>
+    </div>
+  <% end %>
+ 

@@ -1,7 +1,9 @@
-<%= form_with(model: pull_batch) do |form| %>
+<%= form_with(model: pull_batch, class: "box") do |form| %>
   <% if pull_batch.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(pull_batch.errors.count, "error") %> prohibited this pull_batch from being saved:</h2>
+    <div class="notification is-danger">
+      <h2 class="title is-6">
+        <%= pluralize(pull_batch.errors.count, "error") %> prohibited this pull_batch from being saved:
+      </h2>
 
       <ul>
         <% pull_batch.errors.each do |error| %>
@@ -11,7 +13,9 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.submit %>
+  <div class="field">
+    <div class="control">
+      <%= form.submit class: "button is-primary" %>
+    </div>
   </div>
 <% end %>
