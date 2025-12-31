@@ -25,6 +25,6 @@ class PullBatch < ApplicationRecord
 
   private
   def revert_pull_items
-    pull_items.each { |pi| pi.undo! } if completed
+    pull_items.each { |pi| pi.undo! } unless completed
   end
 end
