@@ -18,6 +18,6 @@
 #  fk_rails_...  (assigned_user_id => users.id)
 #
 class PullBatch < ApplicationRecord
-  has_many :pull_items, dependent: :nullify
-  has_many :pull_errors, dependent: :delete_all
+  has_many :pull_items, dependent: :nullify, foreign_key: :pull_batches_id
+  has_many :pull_errors, dependent: :delete_all, foreign_key: :pull_batches_id
 end

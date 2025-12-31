@@ -15,7 +15,7 @@
 #  index_pull_errors_on_pull_batches_id  (pull_batches_id)
 #
 class PullError < ApplicationRecord
-  belongs_to :pull_batch, optional: true
+  belongs_to :pull_batch, optional: true, foreign_key: :pull_batches_id
   enum :item_type, [
     :card
   ]
