@@ -7,7 +7,7 @@ module Inventory
       "manabox_csv" => InventoryFinder::Manabox
     }.freeze
 
-    def self.process(file_path:, format:)
+    def self.process(file_path:, format:, batch_id:)
       finding_class = SUPPORTED_FORMATS[format]
       raise ArgumentError, "Unsupported format: #{format}" unless finding_class
 
@@ -84,6 +84,7 @@ module Inventory
         if items.empty? || item_count == 0
            PullError.create!(
             message: "no Item found in inventory. Requested quantity: #{quantity}",
+            pull_batches_id: batch_id,
             item_type: "card",
             data: {
               name: card_name,
@@ -101,6 +102,7 @@ module Inventory
         if item_count < pull_count
            PullError.create!(
             message: "Insufficient inventory quantity. Requested: #{quantity}, Found: #{item_count}",
+            pull_batches_id: batch_id,
             item_type: "card",
             data: {
               name: card_name,
@@ -120,11 +122,11 @@ module Inventory
           active_item = items.pop
 
           if active_item.quantity > pull_count
-            active_item.pull!(amount: pull_count, pull_metadata: pull_metadata)
+            active_item.pull!(amount: pull_count, pull_metadata: pull_metadata, batch_id: batch_id)
             pull_count = 0
           else
             pull_count -= active_item.quantity
-            active_item.pull!(all_in_location: true, pull_metadata: pull_metadata)
+            active_item.pull!(all_in_location: true, pull_metadata: pull_metadata, batch_id: batch_id)
           end
         end
       end

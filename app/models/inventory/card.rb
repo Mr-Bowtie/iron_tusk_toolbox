@@ -33,13 +33,14 @@ class Inventory::Card < ApplicationRecord
     :damaged
   ]
 
-  def pull!(amount: 0, all_in_location: false, pull_metadata: {})
+  def pull!(amount: 0, all_in_location: false, pull_metadata: {}, batch_id:)
     amount = all_in_location ? self.quantity : amount
     pull_metadata ||= {}
 
     ActiveRecord::Base.transaction do
       PullItem.create!(
         inventory_type: "card",
+        pull_batches_id: batch_id,
         quantity: amount,
         inventory_location: inventory_location,
         data: {
