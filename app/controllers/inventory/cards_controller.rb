@@ -26,27 +26,27 @@ class Inventory::CardsController < ApplicationController
   end
 
   def pull_inventory
-    # check if batch_id is an actual id for an existing batch or a label for a new batch
+    # check if batch_label is an actual id for an existing batch or a label for a new batch
     batch = nil
     record_not_found = false
     batch_create_failure = false
 
-    if params[:batch_id].to_i.to_s == params[:batch_id]
+    if params[:batch_label].to_i.to_s == params[:batch_label]
       begin
-        batch = PullBatch.find(params[:batch_id])
+        batch = PullBatch.find(params[:batch_label])
       rescue ActiveRecord::RecordNotFound => e
         record_not_found = true
       end
     else
       begin
-        batch = PullBatch.create(label: params[:batch_id], assigned_user_id: current_user.id)
+        batch = PullBatch.create(label: pull_csv_params[:batch_label], assigned_user_id: current_user.id)
       rescue ActiveRecord::NotNullViolation, ActiveRecord::InvalidForeignKey
         batch_create_failure = true
       end
     end
 
     if record_not_found
-      flash[:alert] = "no batch could be found with id: #{params[:batch_id]}"
+      flash[:alert] = "no batch could be found with id: #{params[:batch_label]}"
     elsif batch_create_failure
       flash[:alert] = "There was an error creating a new batch, please try again"
     else
@@ -212,7 +212,7 @@ class Inventory::CardsController < ApplicationController
     end
 
     def pull_csv_params
-      params.permit(:csv, :format, :batch_id)
+      params.permit(:csv, :format, :batch_label)
     end
 
     def stage_item_params

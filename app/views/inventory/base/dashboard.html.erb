@@ -43,7 +43,7 @@
         <div class="field" data-controller="choices" data-pull-batch-target="chooseExistingWrapper">
           <%= form.label "Select or Create Batch", class: "label" %>
           <div class="control">
-            <%= form.select :batch_id, @open_pull_batches.map { |pb| [pb.label, pb.id]}, {include_blank: true}, class: "mb-2 choice-select additive-choices has-text-black", data: { pull_batch_target: "batchInput", action: "change->pull-batch#validateCsvForm"} %>
+            <%= form.select :batch_label, @open_pull_batches.map { |pb| [pb.label, pb.id]}, {include_blank: true}, class: "mb-2 choice-select additive-choices has-text-black", data: { pull_batch_target: "batchInput", action: "change->pull-batch#validateCsvForm"} %>
             <p class="has-text-centered has-text-weight-bold has-text-danger integer-error is-hidden">Batch label cannot be an integer. Must contain other text characters</p>
           </div>
         </div>
