@@ -1,0 +1,47 @@
+<div
+  class="modal card-quick-view"
+  data-card-quick-view-id="<%= pull_item.id %>"
+  data-controller="quick-view"
+>
+  <div class="modal-background" data-action="click->quick-view#close"></div>
+  <div class="modal-content is-flex is-align-items-center" style="width: 60%;">
+    <div>
+      <% if metadata.image_uris.length > 0 %>
+        <%= image_tag metadata.image_uris["png"], class: "image" %>
+      <% elsif metadata.front_image_uris.length > 0 %>
+        <%= image_tag metadata.front_image_uris["small"], class: "image" %>
+      <% else %>
+        <p>No Image Found</p>
+      <% end %>
+    </div>
+    <div class="is-flex is-flex-direction-column ml-4">
+      <%= form_with model: pull_item do |form| %>
+
+        <div class="field level">
+          <%= form.label :quantity, class: "label" %>
+          <div class="control">
+            <%= form.number_field :quantity, min: 1, class: "input" %>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= form.submit "Save",
+                      class: "button is-large is-primary",
+                      data: {
+                        action: "click->quick-view#unClip",
+                      } %>
+        </div>
+      <% end %>
+
+      <%# form_with url: inventory_pull_item_path(pull_item), method: :delete, class: "mt-6"  do |form| %>
+        <%# form.submit "Delete",
+                    class: "button is-large is-outlined is-danger",
+                    data: {
+                      action: "click->quick-view#unClip",
+                      turbo_confirm: "Are you sure you want to delete this pull_item?",
+                    } %>
+      <%# end %>
+    </div>
+
+  </div>
+</div>

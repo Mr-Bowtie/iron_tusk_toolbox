@@ -1,0 +1,50 @@
+<div
+  data-controller="quick-view"
+  data-action="click->quick-view#showCardModal"
+  id="<%= dom_id pull_item %>"
+  class="is-flex is-flex-direction-column is-align-items-center card"
+>
+  <div class="level is-mobile">
+    <p
+      class="
+        has-background-grey-dark has-text-white has-text-weight-bold has-text-centered
+        px-2
+      "
+      style="bottom: 6%; position: relative"
+    >
+      <%= pull_item.quantity %>
+    </p>
+    <p class="has-background-grey-dark px-2 <%= condition_class(pull_item.data["condition"]) %>">
+      <%= condition_decorator(pull_item.data["condition"]) %>
+    </p>
+    <% if pull_item.data["foil"] %>
+      <p><b class="has-text-info">Foil</b></p>
+    <% end %>
+  </div>
+
+  <% foil_class = pull_item.data["foil"] ? "is-foil-card" : "" %> 
+  <% if metadata.image_uris.length > 0 %>
+    <div class="<%= foil_class %> image">
+      <%= image_tag metadata.image_uris["normal"], loading: "lazy" %>
+    </div>
+  <% elsif metadata.front_image_uris.length > 0 %>
+    <div class="<%= foil_class %> image">
+      <%= image_tag metadata.front_image_uris["small"], loading: "lazy" %>
+    </div>
+  <% else %>
+    <p>No Image Found</p>
+  <% end %>
+
+  <% if pull_item.data["tcgplayer"] %>
+    <p class="has-text-centered has-text-danger">TCGPlayer</p>
+  <% end %>
+  
+  <p class="has-text-centered"><b><%= pull_item.data["name"] %></b></p>
+  <p><%= pull_item.data["set_code"].upcase %>
+    #<%= pull_item.data["number"] %></p>
+  <% if pull_item.inventory_location %>
+    <p><b>Location:</b>
+      <%= pull_item.inventory_location.label %></p>
+  <% end %>
+
+</div>
