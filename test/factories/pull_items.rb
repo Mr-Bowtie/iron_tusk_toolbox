@@ -23,6 +23,25 @@
 #
 FactoryBot.define do
   factory :pull_item do
-    
+    association :inventory_location
+    inventory_type { "card" }
+    quantity { 3 }
+
+    transient do
+      card_metadatum { create(:card_metadatum) }
+      foil { false }
+      condition { "near_mint" }
+      tcgplayer { false }
+    end
+
+    after(:build) do |pull_item, evaluator|
+      pull_item.data ||= {
+        "scryfall_id" => evaluator.card_metadatum.scryfall_id,
+        "foil" => evaluator.foil,
+        "condition" => evaluator.condition,
+        "card_metadatum_id" => evaluator.card_metadatum.id,
+        "tcgplayer" => evaluator.tcgplayer
+      }
+    end
   end
 end

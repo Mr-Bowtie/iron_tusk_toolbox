@@ -19,6 +19,8 @@
 #
 FactoryBot.define do
   factory :pull_batch do
-    
+    assigned_user_id { create(:user).id }
+    completed { false }
+    sequence(:label) { |n| "Batch #{n}" }
   end
 end
