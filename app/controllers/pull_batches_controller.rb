@@ -1,4 +1,5 @@
 class PullBatchesController < ApplicationController
+  include Pagy::Backend
   before_action :set_pull_batch, only: %i[ show edit update destroy ]
 
   # GET /pull_batches or /pull_batches.json
@@ -8,6 +9,9 @@ class PullBatchesController < ApplicationController
 
   # GET /pull_batches/1 or /pull_batches/1.json
   def show
+    unless @pull_batch.pull_items.empty?
+      @pagy, @batch_items = pagy(@pull_batch.pull_items)
+    end
   end
 
   # GET /pull_batches/new
