@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resources :pull_batches
+  resources :pull_items
   resources :orders
   post "orders/pull_selected" => "orders#pull_selected_orders"
   post "orders/grab_manapool_unfilled" => "orders#grab_unfilled_manapool_orders"
