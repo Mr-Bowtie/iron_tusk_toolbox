@@ -5,6 +5,17 @@ require "open-uri"
 module ManapoolClient
   API_BASE = "https://manapool.com/api/v1/seller"
 
+  def self.credentials!
+    email = ENV.fetch("MANAPOOL_EMAIL", "").strip
+    token = ENV.fetch("MANAPOOL_AUTH_TOKEN", "").strip
+
+    if email.empty? || token.empty?
+      raise ArgumentError, "Missing ManaPool credentials: set MANAPOOL_EMAIL and MANAPOOL_AUTH_TOKEN"
+    end
+
+    [ email, token ]
+  end
+
   def self.create_request(url:, method: "get", params: nil)
     uri = URI(url)
     uri.query = URI.encode_www_form(params) if params&.any?
@@ -15,8 +26,9 @@ module ManapoolClient
     else raise ArgumentError, "Unsupported HTTP method"
     end
 
-    req["X-ManaPool-Email"] = ENV["MANAPOOL_EMAIL"]
-    req["X-ManaPool-Access-Token"] = ENV["MANAPOOL_AUTH_TOKEN"]
+    email, token = credentials!
+    req["X-ManaPool-Email"] = email
+    req["X-ManaPool-Access-Token"] = token
     req["Accept"] = "application/json"
 
     [ req, uri ]

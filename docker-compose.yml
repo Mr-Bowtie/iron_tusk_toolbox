@@ -13,6 +13,8 @@ services:
       FRESH: $FRESH
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      MANAPOOL_EMAIL: $MANAPOOL_EMAIL
+      MANAPOOL_AUTH_TOKEN: $MANAPOOL_AUTH_TOKEN
       # VITE_RUBY_HOST: vite
       DB_HOST: db
     restart: on-failure:3
@@ -63,4 +65,3 @@ volumes:
   gem_cache:
   pgdata:
 # vim: ft=yaml nospell
-
