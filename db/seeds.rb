@@ -8,4 +8,3 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   # encoding: utf-8
 
-FactoryBot.create(:user)
