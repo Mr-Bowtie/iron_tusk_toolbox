@@ -94,6 +94,16 @@ class OrdersController < ApplicationController
     end
   end
 
+  # POST /orders/new_order
+  def new_order_handler
+    # kick off order fetching service
+    Manapool::FetchOrdersService.call(fulfilled: "all")
+    # ping matrix alert room
+    details = params.require(:order).to_unsafe_h.to_h
+    MatrixAlerts::NewOrderService.call(details)
+    head :ok
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_order

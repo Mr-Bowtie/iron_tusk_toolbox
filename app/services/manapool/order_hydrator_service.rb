@@ -1,7 +1,7 @@
 module Manapool
   class OrderHydratorService < ApplicationService
     def self.call(order_id)
-      details = ManapoolClient.fetch_order_details(order_id)["order"]
+      details = ManapoolClient.fetch_order_details(order_id)
       order = Order.find_or_initialize_by(marketplace_id: details["id"])
       order.update(
         marketplace_label: details["label"],

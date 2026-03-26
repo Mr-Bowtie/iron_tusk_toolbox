@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   post "orders/pull_selected" => "orders#pull_selected_orders"
   post "orders/grab_manapool_unfilled" => "orders#grab_unfilled_manapool_orders"
   post "orders/grab_manapool_all" => "orders#grab_all_manapool_orders"
+  post "orders/new_order" => "orders#new_order_handler"
 
   devise_for :users
   resources :inventory_locations

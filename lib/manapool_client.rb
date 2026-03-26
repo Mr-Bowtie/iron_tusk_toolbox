@@ -3,7 +3,7 @@ require "uri"
 require "open-uri"
 
 module ManapoolClient
-  API_BASE = "https://manapool.com/api/v1/seller"
+  API_BASE = "https://manapool.com/api/v1"
 
   def self.credentials!
     email = ENV.fetch("MANAPOOL_EMAIL", "").strip
@@ -40,7 +40,7 @@ module ManapoolClient
 
     loop do
       req, uri = create_request(
-        url: "#{API_BASE}/orders",
+        url: "#{API_BASE}/seller/orders",
         method: "get",
         params: { is_fulfilled: fulfilled, since: since, limit: limit, offset: offset }
       )
@@ -70,6 +70,16 @@ module ManapoolClient
 
       abort "Failed to fetch order info (#{res.code}): #{res.body}" unless res.is_a?(Net::HTTPSuccess)
 
-      JSON.parse(res.body)
+      JSON.parse(res.body)["order"]
+  end
+
+  def self.fetch_webhooks
+    req, uri = create_request(url: "#{API_BASE}/webhooks")
+
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
+      http.request(req)
+    end
+
+    JSON.parse(res.body)
   end
 end
