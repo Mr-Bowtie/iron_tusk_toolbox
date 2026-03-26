@@ -5,8 +5,8 @@
 # docker run -d -p 80:80 -p 443:443 --name my-app -e RAILS_MASTER_KEY=<value from config/master.key> my-app
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
-ARG RUBY_VERSION=3.2.6
-FROM ruby:3.2.6
+ARG RUBY_VERSION=3.4.1
+FROM ruby:3.4.1
 
 # Rails app lives here
 WORKDIR /rails

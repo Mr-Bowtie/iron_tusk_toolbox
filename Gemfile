@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+ruby "3.4.1"
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.2.2", ">= 7.2.2.1"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
@@ -38,11 +40,12 @@ gem "bootsnap", require: false
 # gem "image_processing", "~> 1.2"
 
 gem "fast_jsonparser"
+gem "syslog"
 
 # Job scheduling and background processing
 gem "good_job"  # PostgreSQL-based background jobs
 gem "whenever", require: false  # For cron job scheduling
-gem 'rubyzip', require: 'zip'
+gem "rubyzip", require: "zip"
 
 group :development, :test do
   gem "pry-byebug"
@@ -89,12 +92,13 @@ gem "prawn-table", "~> 0.2.2"
 
 gem "pagy", "~> 9.3"
 
-gem "dockerfile-rails", ">= 1.7", :group => :development
+gem "dockerfile-rails", ">= 1.7", group: :development
 
 gem "json-streamer", "~> 2.1"
 
-gem "yajl-ffi", "~> 1.0"
+gem "yajl-ffi", "~> 1.0", require: false
 
 gem "activerecord-import", "~> 2.2"
 
 gem "devise", "~> 4.9"
+gem "matrix_sdk"

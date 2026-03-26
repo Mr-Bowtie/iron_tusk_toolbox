@@ -2,7 +2,6 @@ require "net/http"
 require "open-uri"
 require "benchmark"
 require "json/streamer"
-require "yajl/ffi"
 
 class ScryfallSyncService < ApplicationService
   @@sync_in_progress = false
@@ -79,7 +78,7 @@ class ScryfallSyncService < ApplicationService
     uri = URI(download_uri)
 
     URI.open(uri) do |io|
-      streamer = Json::Streamer.parser(event_generator: Yajl::FFI::Parser.new, file_io: io, chunk_size: 1024)
+      streamer = Json::Streamer.parser(**streamer_options(io))
       streamer.get(nesting_level: 1) do |object|
         buffer << map_card_attrs(object)
         if buffer.size >= BATCH_SIZE
@@ -134,6 +133,21 @@ class ScryfallSyncService < ApplicationService
   def enqueue_batch(records)
     @sync_stats[:total_batches] += 1
     ScryfallBatchUpsertJob.perform_later(card_data: records)
+  end
+
+  def streamer_options(io)
+    options = { file_io: io, chunk_size: 1024 }
+    event_generator = yajl_event_generator
+    options[:event_generator] = event_generator if event_generator
+    options
+  end
+
+  def yajl_event_generator
+    require "yajl/ffi"
+    Yajl::FFI::Parser.new
+  rescue LoadError => e
+    Rails.logger.warn("YAJL unavailable, falling back to JSON::Stream parser: #{e.message}")
+    nil
   end
 
   def update_sync_status
