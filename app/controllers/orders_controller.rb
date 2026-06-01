@@ -1,5 +1,7 @@
 class OrdersController < ApplicationController
   include Pagy::Backend
+  skip_before_action :authenticate_user!, only: :new_order_handler
+  skip_forgery_protection only: :new_order_handler
   before_action :set_order, only: %i[ show edit update destroy ]
 
   def pull_selected_orders
@@ -100,7 +102,13 @@ class OrdersController < ApplicationController
     Manapool::FetchOrdersService.call(fulfilled: "all")
     # ping matrix alert room
     details = params.require(:order).to_unsafe_h.to_h
-    MatrixAlerts::NewOrderService.call(details)
+    begin
+      MatrixAlerts::NewOrderService.call(details)
+    rescue StandardError => e
+      Rails.logger.error(
+        "Matrix alert failed for webhook order #{details['id']}: #{e.class}: #{e.message}"
+      )
+    end
     head :ok
   end
 

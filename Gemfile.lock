@@ -110,6 +110,7 @@ GEM
     crass (1.0.6)
     cssbundling-rails (1.4.3)
       railties (>= 6.0.0)
+    csv (3.3.2)
     dartsass-rails (0.5.1)
       railties (>= 6.0.0)
       sass-embedded (~> 1.63)
@@ -504,6 +505,7 @@ DEPENDENCIES
   bulma-rails (~> 1.0)
   capybara
   cssbundling-rails
+  csv
   dartsass-rails (~> 0.5.1)
   devise (~> 4.9)
   dockerfile-rails (>= 1.7)

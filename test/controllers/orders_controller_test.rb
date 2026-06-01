@@ -50,7 +50,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to orders_url
   end
 
-  test "should accept Mana Pool webhook payloads for new orders" do
+  test "should accept anonymous Mana Pool webhook payloads for new orders" do
     order_payload = {
       id: "f4b3b9c5-250e-4c3a-815d-6e41577f28e3",
       shipping_address: {
@@ -68,6 +68,10 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
     original_fetch_call = Manapool::FetchOrdersService.method(:call)
     original_alert_call = MatrixAlerts::NewOrderService.method(:call)
+    original_allow_forgery_protection = ActionController::Base.allow_forgery_protection
+
+    sign_out @user
+    ActionController::Base.allow_forgery_protection = true
 
     fetch_service.send(:define_method, :call) do |fulfilled:|
       fetch_called = true
@@ -87,6 +91,48 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert alert_called
     assert_response :ok
   ensure
+    ActionController::Base.allow_forgery_protection = original_allow_forgery_protection
+    fetch_service.send(:define_method, :call, original_fetch_call)
+    alert_service.send(:define_method, :call, original_alert_call)
+  end
+
+  test "should return ok when Matrix alerting fails for new order webhook" do
+    order_payload = {
+      id: "f4b3b9c5-250e-4c3a-815d-6e41577f28e3",
+      shipping_address: {
+        name: "John Doe"
+      },
+      total_cents: 1100
+    }
+
+    fetch_called = false
+    test_case = self
+
+    fetch_service = Manapool::FetchOrdersService.singleton_class
+    alert_service = MatrixAlerts::NewOrderService.singleton_class
+
+    original_fetch_call = Manapool::FetchOrdersService.method(:call)
+    original_alert_call = MatrixAlerts::NewOrderService.method(:call)
+    original_allow_forgery_protection = ActionController::Base.allow_forgery_protection
+
+    sign_out @user
+    ActionController::Base.allow_forgery_protection = true
+
+    fetch_service.send(:define_method, :call) do |fulfilled:|
+      fetch_called = true
+      test_case.assert_equal "all", fulfilled
+    end
+
+    alert_service.send(:define_method, :call) do |_details|
+      raise MatrixSdk::MatrixNotAuthorizedError, "Invalid access token passed."
+    end
+
+    post orders_new_order_url, params: { order: order_payload }, as: :json
+
+    assert fetch_called
+    assert_response :ok
+  ensure
+    ActionController::Base.allow_forgery_protection = original_allow_forgery_protection
     fetch_service.send(:define_method, :call, original_fetch_call)
     alert_service.send(:define_method, :call, original_alert_call)
   end

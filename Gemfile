@@ -102,3 +102,4 @@ gem "activerecord-import", "~> 2.2"
 
 gem "devise", "~> 4.9"
 gem "matrix_sdk"
+gem "csv"

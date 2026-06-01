@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_11_18_191658) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_27_091735) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -172,6 +172,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_18_191658) do
     t.string "label"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "matrix_bot_sessions", force: :cascade do |t|
+    t.text "access_token", null: false
+    t.text "refresh_token"
+    t.datetime "expires_at"
+    t.string "device_id", default: "iron_tusk_alerts", null: false
+    t.boolean "singleton", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["singleton"], name: "index_matrix_bot_sessions_on_singleton", unique: true
   end
 
   create_table "orders", force: :cascade do |t|
