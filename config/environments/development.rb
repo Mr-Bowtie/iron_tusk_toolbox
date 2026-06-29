@@ -82,8 +82,9 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   # allow requests from tailnet
-  config.hosts = [ 
+  config.hosts = [
     "quest:9999", # Allow requests from tailnet
-    "toolbox.batb.love" # allow requests from traefik reverse proxy
+    "toolbox.batb.love", # allow requests from traefik reverse proxy
+    "localhost:9999" # allow local requests
   ]
 end

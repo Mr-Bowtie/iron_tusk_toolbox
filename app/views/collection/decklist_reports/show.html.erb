@@ -1,0 +1,63 @@
+<section class="section pt-4">
+  <div class="content">
+    <%= link_to "← Back to collection decklists", collection_decklists_path, class: "has-text-link" %>
+    <h1 class="title is-3 mt-2"><%= @decklist_report.name %></h1>
+    <p class="subtitle is-5">Generated on <%= l(@decklist_report.generated_at, format: :long) %></p>
+    <%= button_to "Delete report", collection_decklist_report_path(@decklist_report), method: :delete, class: "button is-danger is-light", form: { data: { turbo_confirm: "Delete #{@decklist_report.name}?" } } %>
+  </div>
+</section>
+
+<section class="box">
+  <h2 class="title is-5">Summary</h2>
+  <% if @snapshot.fetch("report_type", nil) == "main_deck_overlap" %>
+    <p><strong>Main deck:</strong> <%= @snapshot.fetch("main_decklist", {}).fetch("name", "Unknown") %></p>
+    <p><strong>Comparison decklists:</strong> <%= @snapshot.fetch("comparison_decklists", []).map { |decklist| decklist.fetch("name") }.join(", ") %></p>
+  <% end %>
+  <div class="columns">
+    <div class="column"><strong>Decklists:</strong> <%= @decklist_report.selected_decklist_count %></div>
+    <% if @snapshot.fetch("report_type", nil) == "main_deck_overlap" %>
+      <div class="column"><strong>Overlapping main deck cards:</strong> <%= @decklist_report.unique_card_count %></div>
+    <% else %>
+      <div class="column"><strong>Unique cards:</strong> <%= @decklist_report.unique_card_count %></div>
+      <div class="column"><strong>Shared cards:</strong> <%= @decklist_report.shared_card_count %></div>
+    <% end %>
+  </div>
+  <ul>
+    <% @snapshot.fetch("decklists", []).each do |decklist| %>
+      <li><%= decklist.fetch("name") %></li>
+    <% end %>
+  </ul>
+</section>
+
+<% @snapshot.fetch("groups", []).each do |group| %>
+  <section class="box">
+    <h2 class="title is-5"><%= group.fetch("label") %></h2>
+    <% decklists = @snapshot.fetch("decklists", []).select { |decklist| group.fetch("decklist_ids").include?(decklist.fetch("id")) } %>
+    <table class="table is-fullwidth is-striped">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Card</th>
+          <% decklists.each do |decklist| %>
+            <th class="has-text-right"><%= decklist.fetch("name") %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% group.fetch("cards").each do |card| %>
+          <tr>
+            <td>
+              <% if card["image_url"].present? %>
+                <%= image_tag card.fetch("image_url"), alt: card.fetch("name"), style: "max-width: 96px;" %>
+              <% end %>
+            </td>
+            <td><%= card.fetch("name") %></td>
+            <% decklists.each do |decklist| %>
+              <td class="has-text-right"><%= card.fetch("quantities").fetch(decklist.fetch("id").to_s, "") %></td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+<% end %>

@@ -1,0 +1,44 @@
+<section class="section pt-4">
+  <div class="content">
+    <%= link_to "← Back to collection decklists", collection_decklists_path, class: "has-text-link" %>
+    <h1 class="title is-3 mt-2"><%= @decklist.name %></h1>
+    <p class="subtitle is-5"><%= @decklist.source_filename %> · <%= @decklist.card_count %> cards</p>
+    <%= button_to "Delete decklist", collection_decklist_path(@decklist), method: :delete, class: "button is-danger is-light", form: { data: { turbo_confirm: "Delete #{@decklist.name}?" } } %>
+  </div>
+</section>
+
+<section class="box">
+  <h2 class="title is-5">Cards</h2>
+  <% if @cards.any? %>
+    <table class="table is-fullwidth is-striped">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Card</th>
+          <th>Quantity</th>
+          <th>Zone</th>
+          <th>Set</th>
+          <th>Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @cards.each do |card| %>
+          <tr>
+            <td>
+              <% if card.card_image_url.present? %>
+                <%= image_tag card.card_image_url, alt: card.card_name, style: "max-width: 96px;" %>
+              <% end %>
+            </td>
+            <td><%= card.card_name %></td>
+            <td><%= card.quantity %></td>
+            <td><%= card.zone.titleize %></td>
+            <td><%= card.set_code %></td>
+            <td><%= card.collector_number %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="has-text-grey">No cards were imported for this decklist.</p>
+  <% end %>
+</section>

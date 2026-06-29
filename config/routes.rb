@@ -7,6 +7,11 @@ Rails.application.routes.draw do
 
   devise_for :users
   resources :inventory_locations
+  namespace :collection do
+    resources :decklists, only: [ :index, :new, :create, :show, :destroy ]
+    resources :decklist_reports, only: [ :index, :create, :show, :destroy ]
+  end
+
   namespace :inventory do
     resources :locations
     resources :location_merges, only: [ :index, :create, :show ] do

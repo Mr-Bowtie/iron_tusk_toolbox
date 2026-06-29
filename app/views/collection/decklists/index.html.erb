@@ -1,0 +1,99 @@
+<section class="section pt-4">
+  <div class="content">
+    <h1 class="title is-3">Collection Decklists</h1>
+    <p class="subtitle is-5">Upload ManaBox decklists, select multiple lists, and generate overlap reports.</p>
+  </div>
+</section>
+
+<section class="box">
+  <h2 class="title is-5">Upload ManaBox decklist</h2>
+  <%= form_with url: collection_decklists_path, scope: :decklist, local: true, multipart: true do |form| %>
+    <div class="field">
+      <%= form.label :file, "ManaBox decklist file", class: "label" %>
+      <p class="help">Upload a ManaBox text export or CSV export.</p>
+      <div class="control">
+        <%= form.file_field :file, accept: ".txt,.csv,text/plain,text/csv", class: "input" %>
+      </div>
+    </div>
+    <%= form.submit "Upload decklist", class: "button is-primary" %>
+  <% end %>
+</section>
+
+<section class="box">
+  <h2 class="title is-5">Uploaded decklists</h2>
+  <% if @decklists.any? %>
+    <%= form_with url: collection_decklist_reports_path, scope: :decklist_report, local: true do |form| %>
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>Select</th>
+            <th>Name</th>
+            <th>Cards</th>
+            <th>Source</th>
+            <th>Uploaded</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @decklists.each do |decklist| %>
+            <tr>
+              <td><%= check_box_tag "decklist_report[decklist_ids][]", decklist.id %></td>
+              <td><%= decklist.name %></td>
+              <td><%= decklist.card_count %></td>
+              <td><%= decklist.source_filename %></td>
+              <td><%= l(decklist.created_at, format: :short) %></td>
+              <td>
+                <div class="buttons are-small">
+                  <%= link_to "View", collection_decklist_path(decklist), class: "button is-link is-light" %>
+                  <%= link_to "Delete", collection_decklist_path(decklist), class: "button is-danger is-light", data: { turbo_method: :delete, turbo_confirm: "Delete #{decklist.name}?" } %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <%= form.submit "Generate report", class: "button is-link" %>
+    <% end %>
+
+    <hr>
+
+    <h3 class="title is-6">Generate focused main deck overlap report</h3>
+    <p class="help mb-3">Choose one main deck, then choose comparison decklists. The report only includes cards from the main deck that also appear in the comparison decks.</p>
+    <%= form_with url: collection_decklist_reports_path, scope: :decklist_report, local: true do |form| %>
+      <%= form.hidden_field :report_type, value: "main_deck_overlap" %>
+      <div class="field">
+        <%= form.label :main_decklist_id, "Main deck", class: "label" %>
+        <div class="control">
+          <div class="select">
+            <%= form.collection_select :main_decklist_id, @decklists, :id, :name, prompt: "Select main deck" %>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Comparison decklists</label>
+        <% @decklists.each do |decklist| %>
+          <label class="checkbox mr-4">
+            <%= check_box_tag "decklist_report[comparison_decklist_ids][]", decklist.id %>
+            <%= decklist.name %>
+          </label>
+        <% end %>
+      </div>
+      <%= form.submit "Generate main deck overlap report", class: "button is-link is-light" %>
+    <% end %>
+  <% else %>
+    <p class="has-text-grey">No collection decklists uploaded yet.</p>
+  <% end %>
+</section>
+
+<section class="box">
+  <h2 class="title is-5">Recent reports</h2>
+  <% if @decklist_reports.any? %>
+    <ul>
+      <% @decklist_reports.each do |report| %>
+        <li><%= link_to report.name, collection_decklist_report_path(report) %> — <%= report.unique_card_count %> unique cards</li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="has-text-grey">No reports generated yet.</p>
+  <% end %>
+</section>
