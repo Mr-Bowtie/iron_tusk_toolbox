@@ -48,6 +48,35 @@ Rails 7.2 app for running the Iron Tusk trading card workflow: manage inventory,
 - Minitest models/system tests: `bin/rails test`
 - Style and security: `bundle exec rubocop`, `bundle exec brakeman`
 
+### Running tests with Docker Compose
+
+When the app is running through `docker compose`, prefer running tests inside the web container so Rails uses the same gemset and database wiring as the app:
+
+```bash
+docker compose exec iron_tusk_toolbox bundle exec rspec
+docker compose exec iron_tusk_toolbox bin/rails test
+```
+
+For targeted runs:
+
+```bash
+docker compose exec iron_tusk_toolbox bundle exec rspec spec/services/collection/decklist_report_creator_spec.rb
+docker compose exec iron_tusk_toolbox bin/rails test test/controllers/collection/decklists_controller_test.rb
+```
+
+If you need to run tests from the host shell while the Compose database is up, point Rails at the forwarded Postgres port instead of the default local socket/`localhost:5432`:
+
+```bash
+env DB_HOST=127.0.0.1 DB_PORT=5434 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres bundle exec rspec
+env DB_HOST=127.0.0.1 DB_PORT=5434 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres bin/rails test
+```
+
+Prepare the test database against the Compose Postgres instance with:
+
+```bash
+env DB_HOST=127.0.0.1 DB_PORT=5434 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres bin/rails db:prepare RAILS_ENV=test
+```
+
 ## Assets
 - Production builds: `yarn build` (JS, Pagy extras) and `yarn build:css` (Bulma/dart-sass). `bin/dev` runs both in watch mode.
 
