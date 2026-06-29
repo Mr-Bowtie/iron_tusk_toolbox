@@ -1,0 +1,41 @@
+<section class="section pt-4">
+  <div class="content">
+    <h1 class="title is-3">Decklist Reports</h1>
+  </div>
+</section>
+
+<section class="box">
+  <% if @decklist_reports.any? %>
+    <table class="table is-fullwidth is-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Decklists</th>
+          <th>Unique cards</th>
+          <th>Shared cards</th>
+          <th>Generated</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @decklist_reports.each do |report| %>
+          <tr>
+            <td><%= report.name %></td>
+            <td><%= report.selected_decklist_count %></td>
+            <td><%= report.unique_card_count %></td>
+            <td><%= report.shared_card_count %></td>
+            <td><%= l(report.generated_at, format: :short) %></td>
+            <td>
+              <div class="buttons are-small">
+                <%= link_to "View", collection_decklist_report_path(report), class: "button is-link is-light" %>
+                <%= button_to "Delete", collection_decklist_report_path(report), method: :delete, class: "button is-danger is-light", form: { data: { turbo_confirm: "Delete #{report.name}?" } } %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="has-text-grey">No decklist reports generated yet.</p>
+  <% end %>
+</section>

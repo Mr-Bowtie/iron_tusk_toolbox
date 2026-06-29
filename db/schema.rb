@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_27_091735) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_03_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -44,6 +44,70 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_091735) do
     t.jsonb "back_image_uris", default: {}
     t.date "released_at"
     t.index ["scryfall_id"], name: "index_card_metadata_on_scryfall_id", unique: true
+  end
+
+  create_table "change_histories", force: :cascade do |t|
+    t.jsonb "change_list"
+    t.string "action"
+    t.string "file_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "collection_cards", force: :cascade do |t|
+    t.bigint "decklist_id", null: false
+    t.string "card_name", null: false
+    t.string "normalized_card_name", null: false
+    t.integer "quantity", default: 1, null: false
+    t.string "zone", default: "mainboard", null: false
+    t.string "game_format"
+    t.jsonb "raw_row", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "set_code"
+    t.string "collector_number"
+    t.index ["decklist_id", "normalized_card_name"], name: "index_collection_cards_on_decklist_id_and_normalized_card_name"
+    t.index ["decklist_id", "zone"], name: "index_collection_cards_on_decklist_id_and_zone"
+    t.index ["decklist_id"], name: "index_collection_cards_on_decklist_id"
+  end
+
+  create_table "collection_decklist_report_decklists", force: :cascade do |t|
+    t.bigint "decklist_report_id", null: false
+    t.bigint "decklist_id", null: false
+    t.string "decklist_name", null: false
+    t.string "source_filename", null: false
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["decklist_id"], name: "index_collection_decklist_report_decklists_on_decklist_id"
+    t.index ["decklist_report_id", "decklist_id"], name: "index_collection_report_decklists_on_report_and_decklist"
+    t.index ["decklist_report_id"], name: "idx_on_decklist_report_id_e45ddd73cb"
+  end
+
+  create_table "collection_decklist_reports", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "selected_decklist_count", default: 0, null: false
+    t.integer "unique_card_count", default: 0, null: false
+    t.integer "shared_card_count", default: 0, null: false
+    t.jsonb "snapshot", default: {}, null: false
+    t.datetime "generated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["generated_at"], name: "index_collection_decklist_reports_on_generated_at"
+  end
+
+  create_table "collection_decklists", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "source_filename", null: false
+    t.string "source_format", default: "manabox", null: false
+    t.string "game_format"
+    t.integer "card_count", default: 0, null: false
+    t.datetime "uploaded_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_collection_decklists_on_name"
+    t.index ["source_format"], name: "index_collection_decklists_on_source_format"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -150,7 +214,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_091735) do
     t.boolean "tcgplayer"
     t.index ["card_metadatum_id"], name: "index_inventory_cards_on_card_metadatum_id"
     t.index ["inventory_location_id"], name: "index_inventory_cards_on_inventory_location_id"
-    t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_scryfall_id_and_foil_and_condition"
+    t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_scryfall_id_and_foil_and_condition", unique: true
   end
 
   create_table "inventory_location_merges", force: :cascade do |t|
@@ -207,8 +271,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_091735) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "assigned_user_id", null: false
-    t.boolean "completed", default: false
-    t.string "label"
+    t.boolean "completed"
     t.index ["assigned_user_id"], name: "index_pull_batches_on_assigned_user_id"
   end
 
@@ -256,6 +319,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_091735) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "collection_cards", "collection_decklists", column: "decklist_id"
+  add_foreign_key "collection_decklist_report_decklists", "collection_decklist_reports", column: "decklist_report_id"
+  add_foreign_key "collection_decklist_report_decklists", "collection_decklists", column: "decklist_id"
   add_foreign_key "inventory_location_merges", "inventory_locations", column: "destination_location_id"
   add_foreign_key "inventory_location_merges", "inventory_locations", column: "source_location_id"
   add_foreign_key "pull_batches", "users", column: "assigned_user_id"
