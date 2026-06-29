@@ -10,6 +10,7 @@ services:
     environment: 
       RAILS_MASTER_KEY: $RAILS_MASTER_KEY
       RAILS_ENV: $RAILS_ENV
+      BUNDLE_PATH: /usr/local/bundle
       FRESH: $FRESH
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -25,7 +26,8 @@ services:
       DB_HOST: db
     restart: always
     depends_on:
-      - 'db'
+      db:
+        condition: service_healthy
       # - 'vite'
     init: true
     ports:
@@ -33,7 +35,6 @@ services:
       - "9999:5000"
     volumes:
       - ./:/rails:delegated
-      - gem_cache:/rails/vendor/bundle
     entrypoint: ./docker-entrypoint.sh
 
   db:
@@ -47,6 +48,12 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
 
   # vite:
   #   command: ./bin/vite dev
@@ -68,6 +75,5 @@ services:
 volumes: 
   # vite_dev:
   # vite_test:
-  gem_cache:
   pgdata:
 # vim: ft=yaml nospell
