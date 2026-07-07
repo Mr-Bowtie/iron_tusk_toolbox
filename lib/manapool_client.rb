@@ -38,6 +38,14 @@ module ManapoolClient
     offset = 0
     orders = []
 
+    Monitoring::Reporter.log(
+      :info,
+      "Fetching ManaPool orders",
+      fulfilled: fulfilled,
+      limit: limit,
+      since: since
+    )
+
     loop do
       req, uri = create_request(
         url: "#{API_BASE}/seller/orders",
@@ -49,7 +57,15 @@ module ManapoolClient
         http.request(req)
       end
 
-      raise "Failed to fetch orders: #{res.code} - #{res.body}" unless res.is_a?(Net::HTTPSuccess)
+      unless res.is_a?(Net::HTTPSuccess)
+        Monitoring::Reporter.log(
+          :error,
+          "ManaPool order fetch failed",
+          status: res.code,
+          body: res.body.to_s.tr("\n", " ")[0, 500]
+        )
+        raise "Failed to fetch orders: #{res.code} - #{res.body}"
+      end
 
       chunk = JSON.parse(res.body)["orders"]
       orders.concat(chunk)
@@ -68,7 +84,16 @@ module ManapoolClient
         http.request(req)
       end
 
-      abort "Failed to fetch order info (#{res.code}): #{res.body}" unless res.is_a?(Net::HTTPSuccess)
+      unless res.is_a?(Net::HTTPSuccess)
+        Monitoring::Reporter.log(
+          :error,
+          "ManaPool order detail fetch failed",
+          order_id: order_id,
+          status: res.code,
+          body: res.body.to_s.tr("\n", " ")[0, 500]
+        )
+        raise "Failed to fetch order info (#{res.code}): #{res.body}"
+      end
 
       JSON.parse(res.body)["order"]
   end

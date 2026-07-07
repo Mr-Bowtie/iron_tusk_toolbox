@@ -36,8 +36,21 @@ class MatrixHttpClient
     when 200..299
       parsed_body
     when 401, 403
+      Monitoring::Reporter.log(
+        :warn,
+        "Matrix request unauthorized",
+        path: path,
+        status: response.code
+      )
       raise MatrixClient::NotAuthorizedError, parsed_body.fetch("error", response.message)
     else
+      Monitoring::Reporter.log(
+        :error,
+        "Matrix request failed",
+        path: path,
+        status: response.code,
+        error: parsed_body.fetch("error", response.body)
+      )
       raise MatrixClient::RequestError, "Matrix request failed with #{response.code}: #{parsed_body.fetch("error", response.body)}"
     end
   end

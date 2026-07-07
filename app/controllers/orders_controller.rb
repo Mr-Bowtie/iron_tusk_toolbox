@@ -102,11 +102,24 @@ class OrdersController < ApplicationController
     Manapool::FetchOrdersService.call(fulfilled: "all")
     # ping matrix alert room
     details = params.require(:order).to_unsafe_h.to_h
+    Monitoring::Reporter.log(
+      :info,
+      "Webhook received",
+      source: "manapool",
+      event_type: "new_order",
+      webhook_order_id: details["id"]
+    )
     begin
       MatrixAlerts::NewOrderService.call(details)
     rescue StandardError => e
-      Rails.logger.error(
-        "Matrix alert failed for webhook order #{details['id']}: #{e.class}: #{e.message}"
+      Monitoring::Reporter.capture_exception(
+        e,
+        message: "Matrix alert failed for incoming order webhook",
+        tags: { component: "orders#new_order_handler" },
+        extra: {
+          webhook_order_id: details["id"],
+          total_cents: details["total_cents"]
+        }
       )
     end
     head :ok

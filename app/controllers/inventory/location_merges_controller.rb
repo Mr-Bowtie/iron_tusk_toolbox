@@ -27,6 +27,12 @@ class Inventory::LocationMergesController < ApplicationController
 
     redirect_to inventory_location_merge_path(merge), notice: "#{source_location.label} merged into #{destination_location.label}."
   rescue ActiveRecord::RecordNotFound, Inventory::LocationMergeService::MergeError => e
+    Monitoring::Reporter.capture_exception(
+      e,
+      message: "Inventory location merge failed",
+      tags: { component: "inventory.location_merges#create" },
+      extra: location_merge_params.to_h
+    )
     redirect_to inventory_location_merges_path(
       location_merge: location_merge_params
     ), alert: e.message
@@ -37,6 +43,12 @@ class Inventory::LocationMergesController < ApplicationController
 
     redirect_to inventory_location_merge_path(@location_merge), notice: "Reverted merge from #{@location_merge.source_location.label}."
   rescue ActiveRecord::RecordNotFound, Inventory::LocationMergeService::MergeError => e
+    Monitoring::Reporter.capture_exception(
+      e,
+      message: "Inventory location merge revert failed",
+      tags: { component: "inventory.location_merges#revert" },
+      extra: { location_merge_id: @location_merge&.id }
+    )
     redirect_to inventory_location_merges_path, alert: e.message
   end
 

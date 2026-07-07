@@ -11,12 +11,42 @@ class ApplicationJob < ActiveJob::Base
   # Most jobs are safe to ignore if the underlying records are no longer available
   discard_on ActiveJob::DeserializationError
 
-  # Log job execution
-  before_perform do |job|
-    Rails.logger.info "Starting job #{job.class.name} with arguments: #{job.arguments}"
-  end
+  around_perform do |job, block|
+    Sentry.with_scope do |scope|
+      scope.set_tags(job: job.class.name, queue: job.queue_name)
+      scope.set_context("job", {
+        "job_id" => job.job_id,
+        "arguments" => job.arguments
+      })
 
-  after_perform do |job|
-    Rails.logger.info "Completed job #{job.class.name}"
+      Monitoring::Reporter.log(
+        :info,
+        "Job started",
+        job: job.class.name,
+        job_id: job.job_id,
+        queue: job.queue_name
+      )
+
+      block.call
+
+      Monitoring::Reporter.log(
+        :info,
+        "Job completed",
+        job: job.class.name,
+        job_id: job.job_id,
+        queue: job.queue_name
+      )
+    rescue StandardError => e
+      Monitoring::Reporter.log(
+        :error,
+        "Job failed",
+        job: job.class.name,
+        job_id: job.job_id,
+        queue: job.queue_name,
+        error_class: e.class.name,
+        error_message: e.message
+      )
+      raise
+    end
   end
 end

@@ -5,7 +5,12 @@ module Manapool
     def perform(order_id)
       Manapool::OrderHydratorService.call(order_id)
     rescue => e
-      Rails.logger.error("[Manapool::OrderHydrationJob] Failed to hydrate order #{order_id}")
+      Monitoring::Reporter.capture_exception(
+        e,
+        message: "ManaPool order hydration failed",
+        tags: { job: "manapool.order_hydration" },
+        extra: { order_id: order_id }
+      )
     end
   end
 end

@@ -30,6 +30,12 @@ class Collection::DecklistsController < ApplicationController
 
     redirect_to collection_decklist_path(decklist), notice: "#{decklist.name} uploaded."
   rescue ActiveRecord::RecordInvalid, ArgumentError => e
+    Monitoring::Reporter.capture_exception(
+      e,
+      message: "Decklist upload failed",
+      tags: { component: "collection.decklists#create" },
+      extra: { filename: uploaded_file&.original_filename }
+    )
     redirect_to collection_decklists_path, alert: e.message
   end
 

@@ -2,7 +2,12 @@ class ScryfallDataSyncJob < ApplicationJob
   queue_as :default
 
   def perform(force_update: false)
-    Rails.logger.info "Starting Scryfall data sync job (force_update: #{force_update})"
+    Monitoring::Reporter.log(
+      :info,
+      "Starting Scryfall data sync job",
+      job: self.class.name,
+      force_update: force_update
+    )
 
 
     begin
@@ -11,10 +16,10 @@ class ScryfallDataSyncJob < ApplicationJob
       if sync_service.update_needed? || force_update
         # Perform the sync
         sync_service.sync_data
-        Rails.logger.info "Scryfall sync completed successfully: !"
+        Monitoring::Reporter.log(:info, "Scryfall sync completed successfully", job: self.class.name)
 
       else
-        Rails.logger.info "No update needed"
+        Monitoring::Reporter.log(:info, "Scryfall sync skipped; no update needed", job: self.class.name)
 
       end
 
@@ -22,13 +27,17 @@ class ScryfallDataSyncJob < ApplicationJob
       # NotificationService.notify_sync_complete(result) if defined?(NotificationService)
 
     rescue => e
-      Rails.logger.error "Scryfall sync failed: #{e.message}"
-      Rails.logger.error e.backtrace.join("\n")
+      Monitoring::Reporter.capture_exception(
+        e,
+        message: "Scryfall sync failed",
+        tags: { job: "scryfall.data_sync" },
+        extra: { force_update: force_update }
+      )
 
       # Optionally notify about failure
       # NotificationService.notify_sync_failed(e) if defined?(NotificationService)
 
-      raise e
+      raise
     end
   end
 end

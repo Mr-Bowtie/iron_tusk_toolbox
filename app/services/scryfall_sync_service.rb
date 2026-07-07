@@ -34,8 +34,12 @@ class ScryfallSyncService < ApplicationService
       perform_sync
     end
 
-    Rails.logger.info "Scryfall sync finished in #{@sync_stats[:execution_time].round(2)}s,
-                      enqueued #{@sync_stats[:total_batches]} batch jobs"
+    Monitoring::Reporter.log(
+      :info,
+      "Scryfall sync finished",
+      execution_time_seconds: @sync_stats[:execution_time].round(2),
+      total_batches: @sync_stats[:total_batches]
+    )
   end
 
   def update_needed?
@@ -53,10 +57,10 @@ class ScryfallSyncService < ApplicationService
   private
 
   def perform_sync
-    Rails.logger.info "Fetching Scryfall bulk data metadata..."
+    Monitoring::Reporter.log(:info, "Fetching Scryfall bulk data metadata")
     bulk_metadata = fetch_bulk_metadata
 
-    Rails.logger.info "Downloading bulk data file..."
+    Monitoring::Reporter.log(:info, "Downloading Scryfall bulk data file")
     download_and_buffer(bulk_metadata["download_uri"])
 
     update_sync_status
@@ -146,7 +150,11 @@ class ScryfallSyncService < ApplicationService
     require "yajl/ffi"
     Yajl::FFI::Parser.new
   rescue LoadError => e
-    Rails.logger.warn("YAJL unavailable, falling back to JSON::Stream parser: #{e.message}")
+    Monitoring::Reporter.log(
+      :warn,
+      "YAJL unavailable, falling back to JSON::Stream parser",
+      error_message: e.message
+    )
     nil
   end
 

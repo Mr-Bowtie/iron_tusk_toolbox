@@ -13,6 +13,15 @@ class Collection::DecklistReportsController < ApplicationController
 
     redirect_to collection_decklist_report_path(report), notice: "Decklist report generated."
   rescue Collection::DecklistReportCreator::ReportError, Collection::MainDeckOverlapReportCreator::ReportError => e
+    Monitoring::Reporter.capture_exception(
+      e,
+      message: "Decklist report generation failed",
+      tags: { component: "collection.decklist_reports#create" },
+      extra: {
+        report_type: params.dig(:decklist_report, :report_type),
+        decklist_ids: selected_decklist_ids
+      }
+    )
     redirect_to collection_decklists_path, alert: e.message
   end
 

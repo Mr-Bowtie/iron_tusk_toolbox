@@ -26,7 +26,12 @@ module Inventory
 
       redirect_to inventory_path, notice: "Inventory restored from backup."
     rescue StandardError => e
-      Rails.logger.error("Inventory restore failed: #{e.message}")
+      Monitoring::Reporter.capture_exception(
+        e,
+        message: "Inventory restore failed",
+        tags: { component: "inventory.backups#restore" },
+        extra: { filename: file&.original_filename }
+      )
       redirect_to inventory_backups_manage_path, alert: "Restore failed: #{e.message}"
     end
 
