@@ -4,6 +4,13 @@
     <title><%= content_for(:title) || "Iron Tusk Toolbox" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <% if ENV["SENTRY_DSN"].present? %>
+      <meta name="sentry-dsn" content="<%= ENV["SENTRY_DSN"] %>">
+      <meta name="sentry-environment" content="<%= ENV.fetch("SENTRY_ENVIRONMENT", Rails.env) %>">
+      <meta name="sentry-release" content="<%= ENV["SENTRY_RELEASE"] %>">
+      <meta name="sentry-traces-sample-rate" content="<%= ENV.fetch("SENTRY_TRACES_SAMPLE_RATE", "0.1") %>">
+      <meta name="sentry-enable-logs" content="<%= ENV.fetch("SENTRY_ENABLE_LOGS", "true") %>">
+    <% end %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 

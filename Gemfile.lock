@@ -415,6 +415,13 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    sentry-rails (6.6.2)
+      railties (>= 5.2.0)
+      sentry-ruby (~> 6.6.2)
+    sentry-ruby (6.6.2)
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      logger
     solargraph (0.56.1)
       backport (~> 1.2)
       benchmark (~> 0.4)
@@ -531,6 +538,8 @@ DEPENDENCIES
   rubocop-rails-omakase
   rubyzip
   selenium-webdriver
+  sentry-rails
+  sentry-ruby
   solargraph
   sprockets-rails
   stimulus-rails

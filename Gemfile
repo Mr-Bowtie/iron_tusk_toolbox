@@ -42,6 +42,10 @@ gem "bootsnap", require: false
 gem "fast_jsonparser"
 gem "syslog"
 
+# Error reporting via the self-hosted GlitchTip instance.
+gem "sentry-ruby"
+gem "sentry-rails"
+
 # Job scheduling and background processing
 gem "good_job"  # PostgreSQL-based background jobs
 gem "whenever", require: false  # For cron job scheduling
