@@ -20,15 +20,16 @@
 - JavaScript stays in ES modules; run `yarn build` often so esbuild flags issues early.
 
 ## Testing Guidelines
-- Favor RSpec for new features (`bundle exec rspec`); name specs `*_spec.rb` and keep them close to the code.
-- Maintain Minitest coverage with `bin/rails test`; model cases live in `test/models`, system flows in `test/system`.
+- Run all Rails tests inside the Docker web container so the app, gems, and Postgres wiring match the real dev environment.
+- Favor RSpec for new features (`docker compose exec iron_tusk_toolbox bundle exec rspec`); name specs `*_spec.rb` and keep them close to the code.
+- Maintain Minitest coverage with `docker compose exec iron_tusk_toolbox bin/rails test`; model cases live in `test/models`, system flows in `test/system`.
 - Reuse FactoryBot definitions in `test/factories`; pull realistic fixtures from `example_data/` when needed.
 - Add regression specs for fixes and verify background jobs with GoodJob’s in-memory adapter.
 
 ## Commit & Pull Request Guidelines
 - Adopt Conventional Commit prefixes (`feat:`, `fix:`, `chore:`) as seen in history; keep subjects under 72 characters.
 - Squash noisy WIP commits before opening PRs and reference linked tickets or issue numbers.
-- PR descriptions must list validation steps (`bin/rails test`, `bundle exec rspec`, `yarn build`) and include screenshots for UI changes.
+- PR descriptions must list validation steps (`docker compose exec iron_tusk_toolbox bin/rails test`, `docker compose exec iron_tusk_toolbox bundle exec rspec`, `yarn build`) and include screenshots for UI changes.
 - Request reviews from the owning team, ensure migrations roll back cleanly, and call out config or data migration impacts.
 
 ## Environment & Configuration Tips

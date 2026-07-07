@@ -43,14 +43,36 @@ Rails 7.2 app for running the Iron Tusk trading card workflow: manage inventory,
 - **ManaPool orders**: Requires `MANAPOOL_EMAIL` and `MANAPOOL_AUTH_TOKEN`. Use the Orders page actions to fetch unfilled or all orders; hydration jobs pull line items before you generate pull sheets.
 - **Inventory flows**: The root path `/inventory` exposes CSV import, staging, and pull workflows for store inventory.
 
+## Error reporting
+
+GlitchTip is configured through the official Sentry Rails SDK. The self-hosted instance is expected at `https://glitchtip.batb.love`.
+
+Create a GlitchTip project for this app, then set the project DSN:
+
+```bash
+SENTRY_DSN=https://PROJECT_KEY@glitchtip.batb.love/PROJECT_ID
+```
+
+Optional environment variables:
+
+```bash
+SENTRY_ENVIRONMENT=production
+SENTRY_RELEASE=iron_tusk_toolbox@<git-sha-or-version>
+SENTRY_TRACES_SAMPLE_RATE=0.0
+SENTRY_SEND_DEFAULT_PII=false
+```
+
+Use `.env.glitchtip.erb` as a copyable template. Without `SENTRY_DSN`, the SDK remains effectively disabled.
+
 ## Tests & quality checks
-- RSpec services and controllers: `bundle exec rspec`
-- Minitest models/system tests: `bin/rails test`
+- Run Rails tests inside the Docker web container. Do not use host-shell `bundle exec rspec` or `bin/rails test` for normal verification.
+- RSpec services and controllers: `docker compose exec iron_tusk_toolbox bundle exec rspec`
+- Minitest models/system tests: `docker compose exec iron_tusk_toolbox bin/rails test`
 - Style and security: `bundle exec rubocop`, `bundle exec brakeman`
 
 ### Running tests with Docker Compose
 
-When the app is running through `docker compose`, prefer running tests inside the web container so Rails uses the same gemset and database wiring as the app:
+Run tests inside the web container so Rails uses the same gemset and database wiring as the app:
 
 ```bash
 docker compose exec iron_tusk_toolbox bundle exec rspec
@@ -62,19 +84,6 @@ For targeted runs:
 ```bash
 docker compose exec iron_tusk_toolbox bundle exec rspec spec/services/collection/decklist_report_creator_spec.rb
 docker compose exec iron_tusk_toolbox bin/rails test test/controllers/collection/decklists_controller_test.rb
-```
-
-If you need to run tests from the host shell while the Compose database is up, point Rails at the forwarded Postgres port instead of the default local socket/`localhost:5432`:
-
-```bash
-env DB_HOST=127.0.0.1 DB_PORT=5434 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres bundle exec rspec
-env DB_HOST=127.0.0.1 DB_PORT=5434 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres bin/rails test
-```
-
-Prepare the test database against the Compose Postgres instance with:
-
-```bash
-env DB_HOST=127.0.0.1 DB_PORT=5434 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres bin/rails db:prepare RAILS_ENV=test
 ```
 
 ## Assets
