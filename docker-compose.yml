@@ -41,6 +41,7 @@ services:
     image: postgres:15
     container_name: $PROJECT_NAME-db
     pull_policy: "missing"
+    restart: always
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
