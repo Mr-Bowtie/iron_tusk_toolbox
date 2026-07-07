@@ -110,10 +110,14 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
     fetch_service = Manapool::FetchOrdersService.singleton_class
     alert_service = MatrixAlerts::NewOrderService.singleton_class
+    reporter = Monitoring::Reporter.singleton_class
 
     original_fetch_call = Manapool::FetchOrdersService.method(:call)
     original_alert_call = MatrixAlerts::NewOrderService.method(:call)
+    original_capture_exception = Monitoring::Reporter.method(:capture_exception)
     original_allow_forgery_protection = ActionController::Base.allow_forgery_protection
+    captured_exception = nil
+    captured_context = nil
 
     sign_out @user
     ActionController::Base.allow_forgery_protection = true
@@ -124,16 +128,28 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     end
 
     alert_service.send(:define_method, :call) do |_details|
-      raise MatrixSdk::MatrixNotAuthorizedError, "Invalid access token passed."
+      raise MatrixSdk::MatrixNotAuthorizedError.new(
+        { errcode: "M_UNKNOWN_TOKEN", error: "Invalid access token passed." },
+        401
+      )
+    end
+
+    reporter.send(:define_method, :capture_exception) do |exception, **context|
+      captured_exception = exception
+      captured_context = context
     end
 
     post orders_new_order_url, params: { order: order_payload }, as: :json
 
     assert fetch_called
     assert_response :ok
+    assert_instance_of MatrixSdk::MatrixNotAuthorizedError, captured_exception
+    assert_equal "orders#new_order_handler", captured_context[:tags][:component]
+    assert_equal order_payload[:id], captured_context[:extra][:webhook_order_id]
   ensure
     ActionController::Base.allow_forgery_protection = original_allow_forgery_protection
     fetch_service.send(:define_method, :call, original_fetch_call)
     alert_service.send(:define_method, :call, original_alert_call)
+    reporter.send(:define_method, :capture_exception, original_capture_exception)
   end
 end
