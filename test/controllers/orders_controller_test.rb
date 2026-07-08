@@ -96,6 +96,34 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     alert_service.send(:define_method, :call, original_alert_call)
   end
 
+  test "should return ok for Mana Pool webhook verification requests without an order payload" do
+    fetch_service = Manapool::FetchOrdersService.singleton_class
+    alert_service = MatrixAlerts::NewOrderService.singleton_class
+
+    original_fetch_call = Manapool::FetchOrdersService.method(:call)
+    original_alert_call = MatrixAlerts::NewOrderService.method(:call)
+    original_allow_forgery_protection = ActionController::Base.allow_forgery_protection
+
+    sign_out @user
+    ActionController::Base.allow_forgery_protection = true
+
+    fetch_service.send(:define_method, :call) do |**_kwargs|
+      flunk "verification request should not fetch orders"
+    end
+
+    alert_service.send(:define_method, :call) do |_details|
+      flunk "verification request should not send matrix alerts"
+    end
+
+    post orders_new_order_url, as: :json
+
+    assert_response :ok
+  ensure
+    ActionController::Base.allow_forgery_protection = original_allow_forgery_protection
+    fetch_service.send(:define_method, :call, original_fetch_call)
+    alert_service.send(:define_method, :call, original_alert_call)
+  end
+
   test "should return ok when Matrix alerting fails for new order webhook" do
     order_payload = {
       id: "f4b3b9c5-250e-4c3a-815d-6e41577f28e3",

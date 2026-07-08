@@ -18,6 +18,10 @@ Rails.application.configure do
     scryfall_daily_sync: {
       cron: "0 2 * * *", # Every day at 2:00 AM
       class: "ScryfallDataSyncJob"
+    },
+    manapool_order_created_webhook_sync: {
+      cron: "0 * * * *", # Every hour
+      class: "Manapool::EnsureOrderCreatedWebhookJob"
     }
   }
   

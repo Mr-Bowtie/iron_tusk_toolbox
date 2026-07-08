@@ -23,6 +23,7 @@ module ManapoolClient
     req = case method
     when "get" then Net::HTTP::Get.new(uri)
     when "post" then Net::HTTP::Post.new(uri)
+    when "put" then Net::HTTP::Put.new(uri)
     else raise ArgumentError, "Unsupported HTTP method"
     end
 
@@ -103,6 +104,43 @@ module ManapoolClient
 
     res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
       http.request(req)
+    end
+
+    unless res.is_a?(Net::HTTPSuccess)
+      Monitoring::Reporter.log(
+        :error,
+        "ManaPool webhook fetch failed",
+        status: res.code,
+        body: res.body.to_s.tr("\n", " ")[0, 500]
+      )
+      raise "Failed to fetch webhooks: #{res.code} - #{res.body}"
+    end
+
+    JSON.parse(res.body)
+  end
+
+  def self.register_webhook(topic:, callback_url:)
+    req, uri = create_request(url: "#{API_BASE}/webhooks/register", method: "put")
+    req["Content-Type"] = "application/json"
+    req.body = JSON.generate(
+      topic: topic,
+      callback_url: callback_url
+    )
+
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
+      http.request(req)
+    end
+
+    unless res.is_a?(Net::HTTPSuccess)
+      Monitoring::Reporter.log(
+        :error,
+        "ManaPool webhook register failed",
+        topic: topic,
+        callback_url: callback_url,
+        status: res.code,
+        body: res.body.to_s.tr("\n", " ")[0, 500]
+      )
+      raise "Failed to register webhook: #{res.code} - #{res.body}"
     end
 
     JSON.parse(res.body)

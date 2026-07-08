@@ -98,6 +98,16 @@ class OrdersController < ApplicationController
 
   # POST /orders/new_order
   def new_order_handler
+    unless params[:order].present?
+      Monitoring::Reporter.log(
+        :info,
+        "Webhook verification received",
+        source: "manapool",
+        event_type: "new_order_verification"
+      )
+      return head :ok
+    end
+
     # kick off order fetching service
     Manapool::FetchOrdersService.call(fulfilled: "all")
     # ping matrix alert room
