@@ -12,3 +12,7 @@ Sentry.init do |config|
   config.enable_logs = ActiveModel::Type::Boolean.new.cast(ENV.fetch("SENTRY_ENABLE_LOGS", "true"))
   config.send_default_pii = ActiveModel::Type::Boolean.new.cast(ENV.fetch("SENTRY_SEND_DEFAULT_PII", "false"))
 end
+
+if Rails.env.production? && ENV["SENTRY_DSN"].present? && Sentry.logger.present?
+  Rails.logger.broadcast_to(Sentry.logger)
+end

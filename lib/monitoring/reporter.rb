@@ -23,19 +23,10 @@ module Monitoring
       formatted_message = format_message(message, context)
 
       Rails.logger.public_send(level, formatted_message)
-      return unless sentry_logger&.respond_to?(level)
-
-      sentry_logger.public_send(level, formatted_message)
     end
 
     def sentry_available?
-      defined?(Sentry) && sentry_logger.present?
-    end
-
-    def sentry_logger
-      return unless defined?(Sentry) && Sentry.respond_to?(:logger)
-
-      Sentry.logger
+      defined?(Sentry) && Sentry.respond_to?(:capture_exception)
     end
 
     def format_message(message, context)

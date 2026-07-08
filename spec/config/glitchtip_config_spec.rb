@@ -29,4 +29,9 @@ RSpec.describe "GlitchTip configuration" do
     expect(initializer).to include("config.enable_logs")
     expect(initializer).to include(":sentry_logger")
   end
+
+  it "broadcasts the production rails logger to sentry" do
+    expect(initializer).to include("Rails.env.production?")
+    expect(initializer).to include("Rails.logger.broadcast_to(Sentry.logger)")
+  end
 end

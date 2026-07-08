@@ -49,19 +49,18 @@ class MonitoringReporterTest < ActiveSupport::TestCase
 
   test "log mirrors to rails logger and sentry logger" do
     rails_logger = Object.new
-    sentry_logger = Object.new
 
     rails_messages = []
     sentry_messages = []
 
-    rails_logger.define_singleton_method(:info) { |message| rails_messages << message }
-    sentry_logger.define_singleton_method(:info) { |message| sentry_messages << message }
+    rails_logger.define_singleton_method(:info) do |message|
+      rails_messages << message
+      sentry_messages << message
+    end
 
     original_rails_logger = Rails.logger
-    original_sentry_logger = Sentry.logger
 
     Rails.singleton_class.send(:define_method, :logger) { rails_logger }
-    Sentry.singleton_class.send(:define_method, :logger) { sentry_logger }
 
     Monitoring::Reporter.log(
       :info,
@@ -77,6 +76,5 @@ class MonitoringReporterTest < ActiveSupport::TestCase
     assert_equal rails_messages.first, sentry_messages.first
   ensure
     Rails.singleton_class.send(:define_method, :logger) { original_rails_logger }
-    Sentry.singleton_class.send(:define_method, :logger) { original_sentry_logger }
   end
 end
