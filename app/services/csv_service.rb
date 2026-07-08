@@ -13,6 +13,7 @@ class CsvService < ApplicationService
   def self.process_streamed_csv(file_path, importer_class, thread_count: 4, batch_size: 1000)
     work_queue = Queue.new
     threads = []
+    rows = importer_class.respond_to?(:prepare_rows) ? importer_class.prepare_rows(CsvParser.parse(file_path)) : CsvParser.parse(file_path)
 
     # TODO: refactor to use background jobs for large imports
     thread_count.times do
@@ -26,7 +27,7 @@ class CsvService < ApplicationService
     end
 
     batch = []
-    CsvParser.parse(file_path).each do |row|
+    rows.each do |row|
       # TODO: refactor to have bad row checker
       next if row["Name"].nil?
       batch << row
