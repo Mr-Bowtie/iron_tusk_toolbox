@@ -76,7 +76,7 @@ class Inventory::CardsController < ApplicationController
     redirect_to inventory_path
   end
 
-  #TODO: add strong params
+  # TODO: add strong params
   def convert_to_inventory
     location = nil
     if params[:new_location_label].length > 0
@@ -89,7 +89,7 @@ class Inventory::CardsController < ApplicationController
     end
 
     unless location.nil? || !location.valid?
-      @cards.update_all staged: false, inventory_location_id: location.id, tcgplayer: params[:tcgplayer]
+      convert_staged_cards_to_inventory!(location: location, tcgplayer: params[:tcgplayer])
       redirect_to inventory_path, notice: "Staging successfully converted to live inventory"
     else
       flash.now[:alert] = "Select an existing inventory location or enter a new location label"
@@ -176,14 +176,12 @@ class Inventory::CardsController < ApplicationController
       @cards = Inventory::Card.joins(:metadata).where(staged: true).order("card_metadata.name ASC")
     end
 
-
     def search_params
       params.fetch(:search, {}).permit(
         :name,
         :set,
         :collector_number
       )
-      
     end
 
     def stage_item_params
@@ -193,6 +191,14 @@ class Inventory::CardsController < ApplicationController
         :foil,
         :condition,
         :staged
+      )
+    end
+
+    def convert_staged_cards_to_inventory!(location:, tcgplayer:)
+      Inventory::StagingConversionService.call(
+        staged_cards: @cards,
+        location: location,
+        tcgplayer: tcgplayer
       )
     end
 end

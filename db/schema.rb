@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_03_010000) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_09_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -210,11 +210,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_03_010000) do
     t.datetime "updated_at", null: false
     t.bigint "card_metadatum_id"
     t.bigint "inventory_location_id"
-    t.boolean "staged"
+    t.boolean "staged", default: false, null: false
     t.boolean "tcgplayer"
     t.index ["card_metadatum_id"], name: "index_inventory_cards_on_card_metadatum_id"
     t.index ["inventory_location_id"], name: "index_inventory_cards_on_inventory_location_id"
-    t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_scryfall_id_and_foil_and_condition", unique: true
+    t.index ["scryfall_id", "foil", "condition", "inventory_location_id"], name: "index_inventory_cards_on_live_card_key_and_location", unique: true, where: "(staged = false)"
+    t.index ["scryfall_id", "foil", "condition"], name: "index_inventory_cards_on_staged_card_key", unique: true, where: "(staged = true)"
   end
 
   create_table "inventory_location_merges", force: :cascade do |t|

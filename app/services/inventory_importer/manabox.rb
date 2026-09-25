@@ -20,15 +20,18 @@ module InventoryImporter
     end
 
     def import!
-      Inventory::Card.create!(
+      card = Inventory::Card.find_or_initialize_by(
+        staged: true,
         condition: Inventory::Card.map_condition(@row["Condition"]),
         scryfall_id: @row["Scryfall ID"],
-        foil: Inventory::Card.map_foil(@row["Foil"]),
-        quantity: @row["Quantity"].to_i,
-        card_metadatum_id: CardMetadatum.find_by!(scryfall_id: @row["Scryfall ID"]).id,
-        manabox_id: @row["ManaBox ID"].to_i,
-        staged: true
+        foil: Inventory::Card.map_foil(@row["Foil"])
       )
+
+      card.quantity = card.quantity.to_i + @row["Quantity"].to_i
+      card.card_metadatum_id ||= CardMetadatum.find_by!(scryfall_id: @row["Scryfall ID"]).id
+      card.manabox_id = @row["ManaBox ID"].to_i
+      card.staged = true
+      card.save!
     end
   end
 end
