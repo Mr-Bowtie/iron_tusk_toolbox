@@ -8,7 +8,11 @@ RSpec.describe MatrixAlerts::NewOrderService do
         "total_cents" => 1234
       }
 
-      expect(MatrixClient).to receive(:send_message).with(include("Jane Doe", "$12.34"))
+      Order.create!(status: :unfulfilled)
+      Order.create!(status: :unfulfilled)
+      Order.create!(status: :shipped)
+
+      expect(MatrixClient).to receive(:send_message).with(include("Jane Doe", "$12.34", "Total unfulfilled orders: 2"))
 
       described_class.call(order_details)
     end
