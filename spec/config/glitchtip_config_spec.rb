@@ -34,4 +34,22 @@ RSpec.describe "GlitchTip configuration" do
     expect(initializer).to include("Rails.env.production?")
     expect(initializer).to include("Rails.logger.broadcast_to(Sentry.logger)")
   end
+
+  it "uses app-specific structured logging subscribers for requests and sql" do
+    expect(initializer).to include('require "monitoring"')
+    expect(initializer).to include("config.rails.structured_logging.subscribers")
+    expect(initializer).to include("Monitoring::LogSubscribers::ActionControllerSubscriber")
+    expect(initializer).to include("Monitoring::LogSubscribers::ActiveRecordSubscriber")
+  end
+
+  it "defines a top-level Monitoring entrypoint that loads its subcomponents" do
+    monitoring_namespace = root.join("lib/monitoring.rb")
+
+    expect(monitoring_namespace).to exist
+    expect(monitoring_namespace.read).to include("module Monitoring")
+    expect(monitoring_namespace.read).to include('require "monitoring/request_context"')
+    expect(monitoring_namespace.read).to include('require "monitoring/reporter"')
+    expect(monitoring_namespace.read).to include('require "monitoring/log_subscribers/action_controller_subscriber"')
+    expect(monitoring_namespace.read).to include('require "monitoring/log_subscribers/active_record_subscriber"')
+  end
 end

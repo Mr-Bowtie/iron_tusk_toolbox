@@ -2,6 +2,8 @@
 
 # GlitchTip speaks the Sentry protocol. Create a project in
 # https://glitchtip.batb.love, then set SENTRY_DSN to that project's DSN.
+require "monitoring"
+
 Sentry.init do |config|
   config.dsn = ENV["SENTRY_DSN"]
   config.environment = ENV.fetch("SENTRY_ENVIRONMENT", Rails.env)
@@ -11,6 +13,10 @@ Sentry.init do |config|
   config.traces_sample_rate = Float(ENV.fetch("SENTRY_TRACES_SAMPLE_RATE", "0.1"))
   config.enable_logs = ActiveModel::Type::Boolean.new.cast(ENV.fetch("SENTRY_ENABLE_LOGS", "true"))
   config.send_default_pii = ActiveModel::Type::Boolean.new.cast(ENV.fetch("SENTRY_SEND_DEFAULT_PII", "false"))
+  config.rails.structured_logging.subscribers = {
+    action_controller: Monitoring::LogSubscribers::ActionControllerSubscriber,
+    active_record: Monitoring::LogSubscribers::ActiveRecordSubscriber
+  }
 end
 
 if Rails.env.production? && ENV["SENTRY_DSN"].present? && Sentry.logger.present?

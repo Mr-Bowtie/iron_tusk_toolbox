@@ -4,8 +4,22 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!
   before_action :configure_sentry_context
+  around_action :with_request_context
 
   private
+
+  def with_request_context
+    Monitoring::RequestContext.request_id = request.request_id
+    Monitoring::RequestContext.controller = controller_path
+    Monitoring::RequestContext.action = action_name
+    Monitoring::RequestContext.method = request.request_method
+    Monitoring::RequestContext.path = request.fullpath
+    Monitoring::RequestContext.format = request.format&.symbol.to_s
+    Monitoring::RequestContext.user_id = current_user&.id
+    yield
+  ensure
+    Monitoring::RequestContext.reset
+  end
 
   def configure_sentry_context
     return unless defined?(Sentry)
