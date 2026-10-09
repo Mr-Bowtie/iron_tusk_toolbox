@@ -109,9 +109,10 @@ class OrdersController < ApplicationController
     end
 
     # kick off order fetching service
-    Manapool::FetchOrdersService.call(fulfilled: "all")
+    orders = Manapool::FetchOrdersService.call(fulfilled: "all")
     # ping matrix alert room
     details = params.require(:order).to_unsafe_h.to_h
+    details[:order_count] = orders.count { |order| order["latest_fulfillment_status"].nil? }
     Monitoring::Reporter.log(
       :info,
       "Webhook received",

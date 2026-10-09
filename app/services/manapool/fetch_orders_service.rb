@@ -7,7 +7,7 @@ module Manapool
       orders = nil
       if fulfilled == "all"
         orders = ManapoolClient.fetch_orders(fulfilled: true, since: last_shipped_order_time)
-        orders += ManapoolClient.fetch_orders(fulfilled: false, since: last_shipped_order_time)
+        orders += ManapoolClient.fetch_orders(fulfilled: false, since: Time.at(0).utc.iso8601)
       else
         orders = ManapoolClient.fetch_orders(fulfilled: fulfilled, since: last_shipped_order_time)
       end
@@ -17,4 +17,3 @@ module Manapool
     end
   end
 end
-

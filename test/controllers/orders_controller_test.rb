@@ -76,6 +76,11 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     fetch_service.send(:define_method, :call) do |fulfilled:|
       fetch_called = true
       test_case.assert_equal "all", fulfilled
+      [
+        { "latest_fulfillment_status" => nil },
+        { "latest_fulfillment_status" => "shipped" },
+        { "latest_fulfillment_status" => nil }
+      ]
     end
 
     alert_service.send(:define_method, :call) do |details|
@@ -83,6 +88,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
       test_case.assert_instance_of Hash, details
       test_case.assert_equal "John Doe", details["shipping_address"]["name"]
       test_case.assert_equal 1100, details["total_cents"]
+      test_case.assert_equal 2, details[:order_count]
     end
 
     post orders_new_order_url, params: { order: order_payload }, as: :json
@@ -153,6 +159,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     fetch_service.send(:define_method, :call) do |fulfilled:|
       fetch_called = true
       test_case.assert_equal "all", fulfilled
+      []
     end
 
     alert_service.send(:define_method, :call) do |_details|

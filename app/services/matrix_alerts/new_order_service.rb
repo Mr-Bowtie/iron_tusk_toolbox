@@ -1,7 +1,7 @@
 module MatrixAlerts
   class NewOrderService < ApplicationService
     def self.call(order_details)
-      unfulfilled_orders_count = Order.unfulfilled.count
+      unfulfilled_orders_count = order_details[:order_count]
 
       msg = %Q(
         New Order!
